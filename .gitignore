@@ -1,0 +1,18 @@
+# Visual Studio / .NET Framework
+.vs/
+**/bin/
+**/obj/
+*.user
+*.suo
+*.sln.docstates
+
+# NuGet (packages.config)
+packages/
+
+# Logs / temporales
+*.log
+*.tlog
+
+# IDEs opcionales
+.idea/
+.vscode/
