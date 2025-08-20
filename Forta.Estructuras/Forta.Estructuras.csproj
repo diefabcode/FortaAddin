@@ -95,7 +95,7 @@
     <EmbeddedResource Include="Resources\EstructuraPlantilla32x32.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\EstToolTip355x355.png" />
+    <EmbeddedResource Include="Resources\EstPlantillaToolTip355x355.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

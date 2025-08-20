@@ -63,9 +63,9 @@ namespace Forta.Estructuras.Properties {
         /// <summary>
         ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap EstructuraPlantilla32x32 {
+        internal static System.Drawing.Bitmap EstPlantillaToolTip355x355 {
             get {
-                object obj = ResourceManager.GetObject("EstructuraPlantilla32x32", resourceCulture);
+                object obj = ResourceManager.GetObject("EstPlantillaToolTip355x355", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -73,9 +73,9 @@ namespace Forta.Estructuras.Properties {
         /// <summary>
         ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap EstToolTip355x355 {
+        internal static System.Drawing.Bitmap EstructuraPlantilla32x32 {
             get {
-                object obj = ResourceManager.GetObject("EstToolTip355x355", resourceCulture);
+                object obj = ResourceManager.GetObject("EstructuraPlantilla32x32", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
