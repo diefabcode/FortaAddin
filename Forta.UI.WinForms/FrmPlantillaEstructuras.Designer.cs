@@ -49,6 +49,9 @@
             this.pnl_PlantillaEstructura.Name = "pnl_PlantillaEstructura";
             this.pnl_PlantillaEstructura.Size = new System.Drawing.Size(822, 77);
             this.pnl_PlantillaEstructura.TabIndex = 0;
+            this.pnl_PlantillaEstructura.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pnl_PlantillaEstructura_MouseDown);
+            this.pnl_PlantillaEstructura.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pnl_PLantillaEstructuras_MouseMove);
+            this.pnl_PlantillaEstructura.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pnl_PlantillaEstructura_MouseUp);
             // 
             // pbx_minimizar
             // 
@@ -93,7 +96,6 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "FrmPlantillaEstructuras";
             this.Text = "FrmPlantillaEstructuras";
-            this.Load += new System.EventHandler(this.FrmPlantillaEstructuras_Load);
             this.pnl_PlantillaEstructura.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pbx_minimizar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbx_maximizar)).EndInit();

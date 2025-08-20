@@ -7,6 +7,8 @@ using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
+using Forta.UI.WinForms;
+using System.Windows.Forms;
 
 #endregion
 
@@ -17,8 +19,17 @@ namespace Forta.Estructuras.Commands
     {
         public Result Execute(ExternalCommandData commandData,ref string message,ElementSet elements)
         {
-            TaskDialog.Show("ESTRUCTURAS", "Command para plantilla de Estructuras");
-            return Result.Succeeded;
+            try
+            {
+                FrmPlantillaEstructuras form = new FrmPlantillaEstructuras();
+                form.ShowDialog();
+                return Result.Succeeded;
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return Result.Failed;
+            }
         }
     }
 }

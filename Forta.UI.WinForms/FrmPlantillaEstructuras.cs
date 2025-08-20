@@ -14,14 +14,12 @@ namespace Forta.UI.WinForms
 {
     public partial class FrmPlantillaEstructuras : Form
     {
+        private bool dragging = false;
+        private Point dragCursorPoint;
+        private Point dragFormPoint;
         public FrmPlantillaEstructuras()
         {
             InitializeComponent();
-        }
-
-        private void FrmPlantillaEstructuras_Load(object sender, EventArgs e)
-        {
-           
         }
 
         private void pbx_cerrar_Click(object sender, EventArgs e)
@@ -45,5 +43,28 @@ namespace Forta.UI.WinForms
         {
             this.WindowState = FormWindowState.Minimized; // Minimiza la ventana
         }
+
+        private void pnl_PlantillaEstructura_MouseDown(object sender, MouseEventArgs e)
+        {
+            dragging = true;
+            dragCursorPoint = Cursor.Position;
+            dragFormPoint = this.Location;
+        }
+
+        private void pnl_PLantillaEstructuras_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (dragging)
+            {
+                Point dif = Point.Subtract(Cursor.Position, new Size(dragCursorPoint));
+                this.Location = Point.Add(dragFormPoint, new Size(dif));
+
+            }
+        }
+
+        private void pnl_PlantillaEstructura_MouseUp(object sender, MouseEventArgs e)
+        {
+            dragging = false;
+        }
+
     }
 }
