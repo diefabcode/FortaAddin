@@ -108,10 +108,13 @@
     <None Include="Resources\Minimizar60x60.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Grosores de línea 185x84.png" />
+    <None Include="Resources\AdquirirPropiedades185x85.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\AdquirirPropiedades185x85.png" />
+    <None Include="Resources\EstilosLinea185x85.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\EstilosLinea185x851.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
