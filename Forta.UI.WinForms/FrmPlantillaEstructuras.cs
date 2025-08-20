@@ -14,6 +14,7 @@ namespace Forta.UI.WinForms
 {
     public partial class FrmPlantillaEstructuras : Form
     {
+       
         private bool dragging = false;
         private Point dragCursorPoint;
         private Point dragFormPoint;
@@ -70,5 +71,23 @@ namespace Forta.UI.WinForms
         {
 
         }
+
+        private void btn_grosoresLinea_Click(object sender, EventArgs e)
+        {
+            DialogResult resultado = MessageBox.Show(
+                "¿Seguro que deseas adquirir todas las propiedades de grosores de líneas?...",
+                "Confirmar",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (resultado == DialogResult.Yes)
+            {
+                // Indicar al comando que ejecute la lógica
+                this.DialogResult = DialogResult.OK;
+                this.Tag = "GrosoresLinea"; // Identificar qué acción
+                this.Close();
+            }
+        }
+
     }
 }

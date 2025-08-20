@@ -76,6 +76,7 @@
             this.btn_grosoresLinea.Size = new System.Drawing.Size(185, 85);
             this.btn_grosoresLinea.TabIndex = 5;
             this.btn_grosoresLinea.UseVisualStyleBackColor = false;
+            this.btn_grosoresLinea.Click += new System.EventHandler(this.btn_grosoresLinea_Click);
             // 
             // pbx_minimizar
             // 
