@@ -41,7 +41,7 @@ namespace Forta.App.Ribbon
             var datosPlaEstPushButton = new PushButtonData(
                 "PlantillaEstructuralBtn",
                 "Plantilla",
-                typeof(FortaApplication).Assembly.Location,
+                typeof(PlantillaEstructural).Assembly.Location,
                 "Forta.Estructuras.Commands.PlantillaEstructural");
             //COLOCANDO PUSHBUTTON DENTRO DEL PANEL
             PushButton plaEstPushButton = panelEstructura.AddItem(datosPlaEstPushButton) as PushButton;

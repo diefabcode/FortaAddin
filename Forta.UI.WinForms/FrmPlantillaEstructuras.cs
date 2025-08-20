@@ -66,5 +66,9 @@ namespace Forta.UI.WinForms
             dragging = false;
         }
 
+        private void FrmPlantillaEstructuras_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

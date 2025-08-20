@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             this.pnl_PlantillaEstructura = new System.Windows.Forms.Panel();
+            this.btn_adquirirPropiedades = new System.Windows.Forms.Button();
+            this.btn_grosoresLinea = new System.Windows.Forms.Button();
             this.pbx_minimizar = new System.Windows.Forms.PictureBox();
             this.pbx_maximizar = new System.Windows.Forms.PictureBox();
             this.pbx_cerrar = new System.Windows.Forms.PictureBox();
@@ -53,8 +55,31 @@
             this.pnl_PlantillaEstructura.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pnl_PLantillaEstructuras_MouseMove);
             this.pnl_PlantillaEstructura.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pnl_PlantillaEstructura_MouseUp);
             // 
+            // btn_adquirirPropiedades
+            // 
+            this.btn_adquirirPropiedades.BackColor = System.Drawing.SystemColors.InactiveBorder;
+            this.btn_adquirirPropiedades.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btn_adquirirPropiedades.Image = global::Forta.UI.WinForms.Properties.Resources.AdquirirPropiedades185x85;
+            this.btn_adquirirPropiedades.Location = new System.Drawing.Point(309, 97);
+            this.btn_adquirirPropiedades.Name = "btn_adquirirPropiedades";
+            this.btn_adquirirPropiedades.Size = new System.Drawing.Size(185, 85);
+            this.btn_adquirirPropiedades.TabIndex = 6;
+            this.btn_adquirirPropiedades.UseVisualStyleBackColor = false;
+            // 
+            // btn_grosoresLinea
+            // 
+            this.btn_grosoresLinea.BackColor = System.Drawing.SystemColors.InactiveBorder;
+            this.btn_grosoresLinea.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btn_grosoresLinea.Image = global::Forta.UI.WinForms.Properties.Resources.Grosores_de_línea_185x84;
+            this.btn_grosoresLinea.Location = new System.Drawing.Point(49, 184);
+            this.btn_grosoresLinea.Name = "btn_grosoresLinea";
+            this.btn_grosoresLinea.Size = new System.Drawing.Size(185, 85);
+            this.btn_grosoresLinea.TabIndex = 5;
+            this.btn_grosoresLinea.UseVisualStyleBackColor = false;
+            // 
             // pbx_minimizar
             // 
+            this.pbx_minimizar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pbx_minimizar.Image = global::Forta.UI.WinForms.Properties.Resources.Minimizar60x60;
             this.pbx_minimizar.Location = new System.Drawing.Point(630, 7);
             this.pbx_minimizar.Name = "pbx_minimizar";
@@ -66,6 +91,7 @@
             // 
             // pbx_maximizar
             // 
+            this.pbx_maximizar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pbx_maximizar.Image = global::Forta.UI.WinForms.Properties.Resources.Maximizar60x60;
             this.pbx_maximizar.Location = new System.Drawing.Point(697, 7);
             this.pbx_maximizar.Name = "pbx_maximizar";
@@ -77,6 +103,7 @@
             // 
             // pbx_cerrar
             // 
+            this.pbx_cerrar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pbx_cerrar.Image = global::Forta.UI.WinForms.Properties.Resources.Cerrar60x60;
             this.pbx_cerrar.Location = new System.Drawing.Point(764, 7);
             this.pbx_cerrar.Name = "pbx_cerrar";
@@ -92,6 +119,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ButtonFace;
             this.ClientSize = new System.Drawing.Size(822, 577);
+            this.Controls.Add(this.btn_adquirirPropiedades);
+            this.Controls.Add(this.btn_grosoresLinea);
             this.Controls.Add(this.pnl_PlantillaEstructura);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "FrmPlantillaEstructuras";
@@ -110,5 +139,7 @@
         private System.Windows.Forms.PictureBox pbx_cerrar;
         private System.Windows.Forms.PictureBox pbx_maximizar;
         private System.Windows.Forms.PictureBox pbx_minimizar;
+        private System.Windows.Forms.Button btn_grosoresLinea;
+        private System.Windows.Forms.Button btn_adquirirPropiedades;
     }
 }

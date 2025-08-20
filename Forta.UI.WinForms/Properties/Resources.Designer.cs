@@ -63,9 +63,29 @@ namespace Forta.UI.WinForms.Properties {
         /// <summary>
         ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap AdquirirPropiedades185x85 {
+            get {
+                object obj = ResourceManager.GetObject("AdquirirPropiedades185x85", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Cerrar60x60 {
             get {
                 object obj = ResourceManager.GetObject("Cerrar60x60", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Grosores_de_línea_185x84 {
+            get {
+                object obj = ResourceManager.GetObject("Grosores de línea 185x84", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
