@@ -54,7 +54,7 @@ namespace Forta.App.Ribbon
             var asmEstructuras = typeof(PlantillaEstructural).Assembly;
             plaEstPushButton.ToolTipImage = ImageLoader.FromResource(
                 asmEstructuras,
-                "Forta.Estructuras.Resources.EstToolTip355x355.png"   // nombre exacto del recurso
+                "Forta.Estructuras.Resources.EstPlantillaToolTip355x355.png"   // nombre exacto del recurso
             );
             plaEstPushButton.LargeImage = ImageLoader.FromResource(
                 asmEstructuras,
