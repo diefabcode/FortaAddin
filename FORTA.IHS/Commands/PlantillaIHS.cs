@@ -14,7 +14,7 @@ namespace Forta.IHS.Commands
     {
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
-            TaskDialog.Show("IHS", "Command para plantilla de IHS");
+            TaskDialog.Show("IHS", "Command para plantilla de IHS prueba");
             return Result.Succeeded;    
         }
     }
