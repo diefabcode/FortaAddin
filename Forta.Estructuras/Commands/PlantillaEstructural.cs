@@ -54,7 +54,11 @@ namespace Forta.Estructuras.Commands
         }
         #endregion
 
-        #region ESTILOS DE LINEA
+        #region BOTON DE ESTILOS DE LINEA
+
+        #region TODO REFERENTE A LINE PATTERNS(PATRONES DE LINEA)
+
+        #region AQUI SE APLICAN LOS PATRONES DE LINEA QUE SE CREARON
         private void AplicarEstilosLinea(Document doc)
         {
             using (Transaction trans = new Transaction(doc, "Aplicar Estilos de Línea"))
@@ -81,6 +85,9 @@ namespace Forta.Estructuras.Commands
             }
         }
 
+        #endregion
+
+        #region AQUI SE ELIMINAN LOS ESTILOS DE LINEA EXISTENTES
         private void EliminarLinePatterns(Document doc)
         {
             FilteredElementCollector collector = new FilteredElementCollector(doc)
@@ -103,6 +110,9 @@ namespace Forta.Estructuras.Commands
             }
         }
 
+        #endregion
+
+        #region AQUI SE CREAN LOS ESTILOS DE LINEA
         private void CrearLinePatternContinua(Document doc)
         {
             LinePattern linePattern = new LinePattern("Línea continua");
@@ -143,12 +153,16 @@ namespace Forta.Estructuras.Commands
 
         #endregion
 
-        #region CREACIÓN DE MATERIALES
+        #endregion
+
+        #endregion
+
+        #region CREACION DE MATERIALES
 
 
         #endregion
 
-        #region CREACION DE PARÁMETROS
+        #region CREACION DE PARAMETROS
 
         #endregion
 

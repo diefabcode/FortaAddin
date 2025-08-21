@@ -67,10 +67,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FrmPlantillaEstructuras.cs">
+    <Compile Include="Estructuras\Plantilla\FrmPlantillaEstructuras.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FrmPlantillaEstructuras.Designer.cs">
+    <Compile Include="Estructuras\Plantilla\FrmPlantillaEstructuras.Designer.cs">
       <DependentUpon>FrmPlantillaEstructuras.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -84,7 +84,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="FrmPlantillaEstructuras.resx">
+    <EmbeddedResource Include="Estructuras\Plantilla\FrmPlantillaEstructuras.resx">
       <DependentUpon>FrmPlantillaEstructuras.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">

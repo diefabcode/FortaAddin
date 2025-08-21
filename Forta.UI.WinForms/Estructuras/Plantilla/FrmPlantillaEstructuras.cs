@@ -23,11 +23,16 @@ namespace Forta.UI.WinForms
             InitializeComponent();
         }
 
+
+        #region BOTONES SUPERIORES DE VENTANA Y PANEL
+
+        //BOTON QUE CIERRA LA VENTANA DEL PLUGIN
         private void pbx_cerrar_Click(object sender, EventArgs e)
         {
-            this.Close(); // Cierra solo la ventana del plugin
+            this.Close(); // Cierra solo la ventana del plugin (no cierra REVIT)
         }
 
+        //BOTON QUE MAXIMIZA LA VENTANA DEL PLUGIN
         private void pbx_maximizar_Click(object sender, EventArgs e)
         {
             if (this.WindowState == FormWindowState.Maximized)
@@ -40,16 +45,21 @@ namespace Forta.UI.WinForms
             }
         }
 
+        //BOTON QUE MINIMIZA LA VENTANA DEL PLUGIN
         private void pbx_minimizar_Click(object sender, EventArgs e)
         {
             this.WindowState = FormWindowState.Minimized; // Minimiza la ventana
         }
 
+
+        #region METODOS PARA PODER ARRASTRAR VENTANA DESDE EL PANEL
+
+        //Se ejecuta cuando haces clic y mantienes presionado el mouse sobre el panel
         private void pnl_PlantillaEstructura_MouseDown(object sender, MouseEventArgs e)
         {
-            dragging = true;
-            dragCursorPoint = Cursor.Position;
-            dragFormPoint = this.Location;
+            dragging = true; //indico que estoy arrastrando
+            dragCursorPoint = Cursor.Position; //guarda la posicion actual del cursor
+            dragFormPoint = this.Location; //guarda la posicion actual de la ventana (formulario)
         }
 
         private void pnl_PLantillaEstructuras_MouseMove(object sender, MouseEventArgs e)
@@ -66,6 +76,10 @@ namespace Forta.UI.WinForms
         {
             dragging = false;
         }
+        #endregion
+
+        #endregion
+
 
         private void FrmPlantillaEstructuras_Load(object sender, EventArgs e)
         {
@@ -74,6 +88,7 @@ namespace Forta.UI.WinForms
 
 
 
+        #region EVENTO DE BOTON DE ESTILOS DE LINEA
         private void btn_estilosLinea_Click_1(object sender, EventArgs e)
         {
             DialogResult resultado = MessageBox.Show(
@@ -89,6 +104,7 @@ namespace Forta.UI.WinForms
                 this.Close();
             }
         }
+        #endregion
 
         private void btn_iniciaFamilias_Click(object sender, EventArgs e)
         {
