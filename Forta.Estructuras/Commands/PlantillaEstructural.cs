@@ -9,6 +9,7 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
 using Forta.UI.WinForms;
+using System.Linq;
 
 #endregion
 
@@ -29,11 +30,17 @@ namespace Forta.Estructuras.Commands
                 if (resultado == DialogResult.OK)
                 {
                     string accion = form.Tag?.ToString();
+                    
 
                     if (accion == "EstilosLinea")
                     {
                         AplicarEstilosLinea(commandData.Application.ActiveUIDocument.Document);
                         TaskDialog.Show("Éxito", "Estilos de línea aplicados correctamente.");
+                    }
+                    else if (accion == "InicializarFamilias")
+                    {
+                        InicializarFamiliasSuelos(commandData.Application.ActiveUIDocument.Document);
+                        
                     }
                 }
 
@@ -136,6 +143,148 @@ namespace Forta.Estructuras.Commands
 
         #endregion
 
+        #region CREACIÓN DE MATERIALES
 
+
+        #endregion
+
+        #region CREACION DE PARÁMETROS
+
+        #endregion
+
+        #region INICIALIZAR FAMILIAS DE SUELOS
+
+        private void InicializarFamiliasSuelos(Document doc)
+        {
+            using (Transaction trans = new Transaction(doc, "Inicializar Familias de Suelos"))
+            {
+                trans.Start();
+
+                try
+                {
+                    // Obtener todos los tipos de suelos existentes
+                    var tiposSuelosExistentes = new FilteredElementCollector(doc)
+                        .OfClass(typeof(FloorType))
+                        .Cast<FloorType>()
+                        .ToList();
+
+                    TaskDialog.Show("Info", $"Se encontraron {tiposSuelosExistentes.Count} tipos de suelos");
+
+                    // Verificar qué tipos están en uso
+                    var tiposEnUso = VerificarTiposSuelosEnUso(doc);
+                    TaskDialog.Show("Info", $"Se encontraron {tiposEnUso.Count} tipos de suelos en uso en el modelo");
+
+                    // Definir las familias de suelos que queremos crear
+                    var familiasSuelosDeseadas = new List<(string nombre, double espesor)>
+{
+                    ("LM-1", UnitUtils.ConvertToInternalUnits(0.15, UnitTypeId.Meters)), // 15 cm
+                    ("LN-1", UnitUtils.ConvertToInternalUnits(0.05, UnitTypeId.Meters)), // 5 cm
+                    ("FI-1", UnitUtils.ConvertToInternalUnits(0.10, UnitTypeId.Meters))  // 10 cm
+};
+
+                    TaskDialog.Show("Info", "Iniciando creación de tipos de suelos...");
+
+                    // Crear las familias de suelos deseadas si no existen
+                    foreach (var (nombre, espesor) in familiasSuelosDeseadas)
+                    {
+                        if (!tiposSuelosExistentes.Any(t => t.Name == nombre))
+                        {
+                            CrearTipoSuelo(doc, nombre, espesor);
+                        }
+                        else
+                        {
+                            TaskDialog.Show("Info", $"El tipo de suelo '{nombre}' ya existe");
+                        }
+                    }
+
+                    // Eliminar tipos que no están en uso y no son los que queremos crear
+                    var tiposParaEliminar = new List<ElementId>();
+
+                    foreach (var tipoSuelo in tiposSuelosExistentes)
+                    {
+                        bool esDeseado = familiasSuelosDeseadas.Any(f => f.nombre == tipoSuelo.Name);
+                        bool estaEnUso = tiposEnUso.Contains(tipoSuelo.Id);
+
+                        if (!esDeseado && !estaEnUso)
+                        {
+                            tiposParaEliminar.Add(tipoSuelo.Id);
+                        }
+                        else if (!esDeseado && estaEnUso)
+                        {
+                            TaskDialog.Show("Información", $"No se pudo eliminar el suelo '{tipoSuelo.Name}' porque existe en el modelo.");
+                        }
+                    }
+
+                    // Eliminar todos los tipos de una vez
+                    if (tiposParaEliminar.Count > 0)
+                    {
+                        try
+                        {
+                            doc.Delete(tiposParaEliminar);
+                            TaskDialog.Show("Info", $"Se eliminaron {tiposParaEliminar.Count} tipos de suelos no utilizados");
+                        }
+                        catch (Exception ex)
+                        {
+                            TaskDialog.Show("Advertencia", $"Error al eliminar tipos: {ex.Message}");
+                        }
+                    }
+
+                    trans.Commit();
+                }
+                catch (Exception ex)
+                {
+                    trans.RollBack();
+                    throw new Exception("Error durante la inicialización de familias: " + ex.Message);
+                }
+            }
+        }
+
+        private HashSet<ElementId> VerificarTiposSuelosEnUso(Document doc)
+        {
+            var tiposEnUso = new HashSet<ElementId>();
+
+            // Obtener todos los suelos en el proyecto
+            var suelos = new FilteredElementCollector(doc)
+                .OfClass(typeof(Floor))
+                .Cast<Floor>()
+                .ToList();
+
+            foreach (var suelo in suelos)
+            {
+                tiposEnUso.Add(suelo.GetTypeId());
+            }
+
+            return tiposEnUso;
+        }
+
+        private void CrearTipoSuelo(Document doc, string nombre, double espesor)
+        {
+            try
+            {
+                // Buscar un tipo de suelo existente como plantilla
+                var tipoPlantilla = new FilteredElementCollector(doc)
+                    .OfClass(typeof(FloorType))
+                    .Cast<FloorType>()
+                    .FirstOrDefault();
+
+                if (tipoPlantilla == null)
+                {
+                    throw new InvalidOperationException("No se encontró ningún tipo de suelo como plantilla.");
+                }
+
+                // Duplicar el tipo de suelo
+                var nuevoTipo = tipoPlantilla.Duplicate(nombre) as FloorType;
+
+                TaskDialog.Show("Info", $"Tipo de suelo '{nombre}' creado correctamente");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error al crear el tipo de suelo '{nombre}': {ex.Message}");
+            }
+        }
+
+        #endregion
+
+        
     }
 }

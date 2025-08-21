@@ -66,6 +66,7 @@
             this.btn_iniciaFamilias.Size = new System.Drawing.Size(185, 85);
             this.btn_iniciaFamilias.TabIndex = 8;
             this.btn_iniciaFamilias.UseVisualStyleBackColor = false;
+            this.btn_iniciaFamilias.Click += new System.EventHandler(this.btn_iniciaFamilias_Click);
             // 
             // btn_estilosLinea
             // 

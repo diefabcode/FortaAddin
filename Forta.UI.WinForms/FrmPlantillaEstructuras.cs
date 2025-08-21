@@ -90,6 +90,22 @@ namespace Forta.UI.WinForms
             }
         }
 
+        private void btn_iniciaFamilias_Click(object sender, EventArgs e)
+        {
+            DialogResult resultado = MessageBox.Show(
+        "¿Estás seguro de que quieres inicializar tus familias?\n\n" +
+        "Las familias que no estén en uso (modeladas) serán eliminadas.",
+        "Inicializar Familias",
+        MessageBoxButtons.OKCancel,
+        MessageBoxIcon.Question);
+
+            if (resultado == DialogResult.OK)
+            {
+                this.DialogResult = DialogResult.OK;
+                this.Tag = "InicializarFamilias";
+                this.Close();
+            }
+        }
     }
 }
 
