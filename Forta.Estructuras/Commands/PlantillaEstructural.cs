@@ -168,11 +168,11 @@ namespace Forta.Estructuras.Commands
                         .Cast<FloorType>()
                         .ToList();
 
-                    TaskDialog.Show("Info", $"Se encontraron {tiposSuelosExistentes.Count} tipos de suelos");
+                    
 
                     // Verificar qué tipos están en uso
                     var tiposEnUso = VerificarTiposSuelosEnUso(doc);
-                    TaskDialog.Show("Info", $"Se encontraron {tiposEnUso.Count} tipos de suelos en uso en el modelo");
+                    
 
                     // Definir las familias de suelos que queremos crear
                     var familiasSuelosDeseadas = new List<(string nombre, double espesor)>
@@ -182,7 +182,7 @@ namespace Forta.Estructuras.Commands
                     ("FI-1", UnitUtils.ConvertToInternalUnits(0.10, UnitTypeId.Meters))  // 10 cm
 };
 
-                    TaskDialog.Show("Info", "Iniciando creación de tipos de suelos...");
+                    
 
                     // Crear las familias de suelos deseadas si no existen
                     foreach (var (nombre, espesor) in familiasSuelosDeseadas)
@@ -191,10 +191,7 @@ namespace Forta.Estructuras.Commands
                         {
                             CrearTipoSuelo(doc, nombre, espesor);
                         }
-                        else
-                        {
-                            TaskDialog.Show("Info", $"El tipo de suelo '{nombre}' ya existe");
-                        }
+                        
                     }
 
                     // Eliminar tipos que no están en uso y no son los que queremos crear
@@ -221,7 +218,7 @@ namespace Forta.Estructuras.Commands
                         try
                         {
                             doc.Delete(tiposParaEliminar);
-                            TaskDialog.Show("Info", $"Se eliminaron {tiposParaEliminar.Count} tipos de suelos no utilizados");
+                            
                         }
                         catch (Exception ex)
                         {
@@ -275,7 +272,7 @@ namespace Forta.Estructuras.Commands
                 // Duplicar el tipo de suelo
                 var nuevoTipo = tipoPlantilla.Duplicate(nombre) as FloorType;
 
-                TaskDialog.Show("Info", $"Tipo de suelo '{nombre}' creado correctamente");
+                
             }
             catch (Exception ex)
             {
