@@ -72,14 +72,20 @@ namespace Forta.UI.WinForms
 
         }
 
-        private void btn_grosoresLinea_Click(object sender, EventArgs e)
+        private void btn_estilosLinea_Click(object sender, EventArgs e)
         {
-            MessageBox.Show(
-        "FUNCIONALIDAD EN PROCESO",
-        "Grosores de Línea",
-        MessageBoxButtons.OK,
-        MessageBoxIcon.Information);
-        }
+            DialogResult resultado = MessageBox.Show(
+                "¿Seguro que deseas aplicar los estilos de línea estándar? Esto eliminará todos los line patterns existentes y creará nuevos.",
+                "Estilos de Línea",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
 
+            if (resultado == DialogResult.Yes)
+            {
+                this.DialogResult = DialogResult.OK;
+                this.Tag = "EstilosLinea";
+                this.Close();
+            }
+        }
     }
 }
