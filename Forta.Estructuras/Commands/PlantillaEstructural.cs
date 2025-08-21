@@ -17,6 +17,8 @@ namespace Forta.Estructuras.Commands
     [Transaction(TransactionMode.Manual)]
     public class PlantillaEstructural : IExternalCommand
     {
+
+        #region EJECUCION DEL CODIGO
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
             try
@@ -43,9 +45,9 @@ namespace Forta.Estructuras.Commands
                 return Result.Failed;
             }
         }
+        #endregion
 
-
-
+        #region ESTILOS DE LINEA
         private void AplicarEstilosLinea(Document doc)
         {
             using (Transaction trans = new Transaction(doc, "Aplicar Estilos de Línea"))
@@ -131,6 +133,9 @@ namespace Forta.Estructuras.Commands
 
             LinePatternElement.Create(doc, linePattern);
         }
+
+        #endregion
+
 
     }
 }

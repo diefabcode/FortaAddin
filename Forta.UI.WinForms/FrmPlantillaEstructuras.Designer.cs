@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.pnl_PlantillaEstructura = new System.Windows.Forms.Panel();
+            this.btn_iniciaFamilias = new System.Windows.Forms.Button();
             this.btn_estilosLinea = new System.Windows.Forms.Button();
             this.btn_adquirirPropiedades = new System.Windows.Forms.Button();
             this.pbx_minimizar = new System.Windows.Forms.PictureBox();
@@ -54,6 +55,17 @@
             this.pnl_PlantillaEstructura.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pnl_PlantillaEstructura_MouseDown);
             this.pnl_PlantillaEstructura.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pnl_PLantillaEstructuras_MouseMove);
             this.pnl_PlantillaEstructura.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pnl_PlantillaEstructura_MouseUp);
+            // 
+            // btn_iniciaFamilias
+            // 
+            this.btn_iniciaFamilias.BackColor = System.Drawing.SystemColors.InactiveBorder;
+            this.btn_iniciaFamilias.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btn_iniciaFamilias.Image = global::Forta.UI.WinForms.Properties.Resources.InicializaFamilias185x85;
+            this.btn_iniciaFamilias.Location = new System.Drawing.Point(43, 305);
+            this.btn_iniciaFamilias.Name = "btn_iniciaFamilias";
+            this.btn_iniciaFamilias.Size = new System.Drawing.Size(185, 85);
+            this.btn_iniciaFamilias.TabIndex = 8;
+            this.btn_iniciaFamilias.UseVisualStyleBackColor = false;
             // 
             // btn_estilosLinea
             // 
@@ -120,6 +132,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ButtonFace;
             this.ClientSize = new System.Drawing.Size(822, 577);
+            this.Controls.Add(this.btn_iniciaFamilias);
             this.Controls.Add(this.btn_estilosLinea);
             this.Controls.Add(this.btn_adquirirPropiedades);
             this.Controls.Add(this.pnl_PlantillaEstructura);
@@ -143,5 +156,6 @@
         private System.Windows.Forms.PictureBox pbx_minimizar;
         private System.Windows.Forms.Button btn_adquirirPropiedades;
         private System.Windows.Forms.Button btn_estilosLinea;
+        private System.Windows.Forms.Button btn_iniciaFamilias;
     }
 }
