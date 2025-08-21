@@ -93,6 +93,16 @@ namespace Forta.UI.WinForms.Properties {
         /// <summary>
         ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap EstilosLinea185x851 {
+            get {
+                object obj = ResourceManager.GetObject("EstilosLinea185x851", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Maximizar60x60 {
             get {
                 object obj = ResourceManager.GetObject("Maximizar60x60", resourceCulture);

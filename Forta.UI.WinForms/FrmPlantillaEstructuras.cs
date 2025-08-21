@@ -14,7 +14,7 @@ namespace Forta.UI.WinForms
 {
     public partial class FrmPlantillaEstructuras : Form
     {
-       
+
         private bool dragging = false;
         private Point dragCursorPoint;
         private Point dragFormPoint;
@@ -72,13 +72,15 @@ namespace Forta.UI.WinForms
 
         }
 
-        private void btn_estilosLinea_Click(object sender, EventArgs e)
+
+
+        private void btn_estilosLinea_Click_1(object sender, EventArgs e)
         {
             DialogResult resultado = MessageBox.Show(
-                "¿Seguro que deseas aplicar los estilos de línea estándar? Esto eliminará todos los line patterns existentes y creará nuevos.",
-                "Estilos de Línea",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question);
+        "¿Seguro que deseas aplicar los estilos de línea estándar? Esto eliminará todos los line patterns existentes y creará nuevos.",
+        "Estilos de Línea",
+        MessageBoxButtons.YesNo,
+        MessageBoxIcon.Question);
 
             if (resultado == DialogResult.Yes)
             {
@@ -87,5 +89,7 @@ namespace Forta.UI.WinForms
                 this.Close();
             }
         }
+
     }
 }
+

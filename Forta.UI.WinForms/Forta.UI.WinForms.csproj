@@ -116,6 +116,9 @@
   <ItemGroup>
     <None Include="Resources\EstilosLinea185x851.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\EstilosLinea185x852.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>REM if exist "$(AppData)\Autodesk\REVIT\Addins\2023" copy "$(ProjectDir)*.addin" "$(AppData)\Autodesk\REVIT\Addins\2023"
