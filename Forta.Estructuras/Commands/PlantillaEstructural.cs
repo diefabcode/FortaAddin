@@ -251,13 +251,31 @@ namespace Forta.Estructuras.Commands
 
         #region OBJETOS DE MODELO
 
+        #region ASIGNAR GROSORES DE LINEA
+
+        ////////PROYECCIÓN//////////
+
+        /* ATENCIÓN CLAUDE, AQUI QUIERO QUE HAGAS LO SIGUIENTE:
+        
+        DENTRO DE LA PESTAÑA DE ESTILOS DE OBJETO, A TODOS LOS OBJETOS DE MODELO DE REVIT 
+        QUIERO QUE EL GROSOR DE LINEA EN PROYECCIÓN SEA 1 Y QUE EL GROSOR DE LÍNEA EN CORTE SEA 2
+       
+        */
+
+        ///////////CORTE////////////
+
+
+        #endregion
+
         #endregion
 
         #region OBJETOS DE ANOTACIÓN
 
         #endregion
 
-        #endregion      
+        #endregion
+
+        #endregion
 
         #region CREACION DE MATERIALES
 
