@@ -75,6 +75,11 @@ namespace Forta.Estructuras.Commands
                     CrearLinePatternEje(doc);
                     CrearLinePatternPunto(doc);
                     CrearLineadeLLamada(doc);
+                    CrearLineaPatternCajaReferencia(doc);
+                    CrearLineaPatternPlanosReferencia(doc);
+                    CrearLineaPatternOculta(doc);
+                    CrearLineaPatternProyeccion(doc);
+                    CrearLineaPatternCorte(doc);
 
                     trans.Commit();
                 }
@@ -169,11 +174,90 @@ namespace Forta.Estructuras.Commands
             LinePatternElement.Create(doc, linePattern);
         }
 
-        #endregion
+        private void CrearLineaPatternCajaReferencia(Document doc)
+        {
+            LinePattern linePattern = new LinePattern("Linea de Cajas de Referencia");
+            linePattern.SetSegments(new List<LinePatternSegment>
+    {
+        new LinePatternSegment(LinePatternSegmentType.Dash, 3 / 304.8), // 3mm
+        new LinePatternSegment(LinePatternSegmentType.Space, 3 / 304.8), // 3mm       
+
+    });
+
+            LinePatternElement.Create(doc, linePattern);
+        }
+
+        private void CrearLineaPatternPlanosReferencia(Document doc)
+        {
+            LinePattern linePattern = new LinePattern("Linea de Planos de Referencia");
+            linePattern.SetSegments(new List<LinePatternSegment>
+    {
+        new LinePatternSegment(LinePatternSegmentType.Dash, 3 / 304.8), // 3mm
+        new LinePatternSegment(LinePatternSegmentType.Space, 3 / 304.8), // 3mm       
+
+    });
+
+            LinePatternElement.Create(doc, linePattern);
+        }
+
+        private void CrearLineaPatternOculta(Document doc)
+        {
+            LinePattern linePattern = new LinePattern("Linea Oculta");
+            linePattern.SetSegments(new List<LinePatternSegment>
+    {
+        new LinePatternSegment(LinePatternSegmentType.Dash, 4.7625 / 304.8), // 4.7625mm
+        new LinePatternSegment(LinePatternSegmentType.Space, 2.3813 / 304.8), // 2.3813mm       
+
+    });
+
+            LinePatternElement.Create(doc, linePattern);
+        }
+
+        private void CrearLineaPatternProyeccion(Document doc)
+        {
+            LinePattern linePattern = new LinePattern("Linea de Proyección");
+            linePattern.SetSegments(new List<LinePatternSegment>
+    {
+        new LinePatternSegment(LinePatternSegmentType.Dash, 2 / 304.8), // 2mm
+        new LinePatternSegment(LinePatternSegmentType.Space, 2 / 304.8), // 2mm       
+
+    });
+
+            LinePatternElement.Create(doc, linePattern);
+        }
+
+        private void CrearLineaPatternCorte(Document doc)
+        {
+            LinePattern linePattern = new LinePattern("Linea de Corte");
+            linePattern.SetSegments(new List<LinePatternSegment>
+    {
+        new LinePatternSegment(LinePatternSegmentType.Dash, 6.35 / 304.8), // 6.35mm
+        new LinePatternSegment(LinePatternSegmentType.Space, 4.7625 / 304.8), // 4.7625mm
+        new LinePatternSegment(LinePatternSegmentType.Dot, 0), // 
+        new LinePatternSegment(LinePatternSegmentType.Space, 4.7625 / 304.8), // 4.7625mm
+
+    });
+
+            LinePatternElement.Create(doc, linePattern);
+        }
 
         #endregion
 
+
+
         #endregion
+
+        #region TODO LO REFERENTE A OBJECT STYLES (ESTILOS DE OBJETO)
+
+        #region OBJETOS DE MODELO
+
+        #endregion
+
+        #region OBJETOS DE ANOTACIÓN
+
+        #endregion
+
+        #endregion      
 
         #region CREACION DE MATERIALES
 
