@@ -83,6 +83,10 @@ namespace Forta.Estructuras.Commands
                     ConfigurarObjectStyles(doc);
                     ConfigurarObjectStylesAnotacion(doc);
 
+                    // 4. Configurar estilos de linea
+                    // 4. Configurar Line Styles
+                    ConfigurarLineStyles(doc);
+
                     trans.Commit();
                 }
                 catch (Exception ex)
@@ -430,6 +434,291 @@ namespace Forta.Estructuras.Commands
             catch (Exception ex)
             {
                 Debug.WriteLine($"Error asignando line pattern '{linePatternName}' a categoría '{category.Name}': {ex.Message}");
+            }
+        }
+
+        #endregion
+
+        #endregion
+
+        #region ESTILOS DE LÍNEA
+
+        #region CONFIGURACION DE LINE STYLES (ESTILOS DE LINEA)
+
+        private void ConfigurarLineStyles(Document doc)
+        {
+            try
+            {
+                // Obtener la categoría principal de líneas
+                Category linesCategory = doc.Settings.Categories.get_Item(BuiltInCategory.OST_Lines);
+
+                // PRIMERO: Eliminar todos los estilos personalizados (que no empiecen con "<")
+                EliminarLineStylesPersonalizados(doc, linesCategory.SubCategories, null);
+
+                // SEGUNDO: Crear los nuevos estilos de línea
+                CrearNuevosLineStyles(doc);
+
+                // TERCERO: Configurar propiedades de todos los estilos
+                ConfigurarPropiedadesLineStyles(doc);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error al configurar Line Styles: {ex.Message}");
+            }
+        }
+
+        private void EliminarLineStylesPersonalizados(Document doc, CategoryNameMap lineCategories, HashSet<string> estilosBuiltIn)
+        {
+            try
+            {
+                List<ElementId> idsToDelete = new List<ElementId>();
+
+                foreach (Category lineStyle in lineCategories)
+                {
+                    // Eliminar TODOS los estilos que NO empiecen con "<"
+                    if (!lineStyle.Name.StartsWith("<"))
+                    {
+                        idsToDelete.Add(lineStyle.Id);
+                        Debug.WriteLine($"Marcando para eliminar: {lineStyle.Name}");
+                    }
+                    else
+                    {
+                        Debug.WriteLine($"Conservando estilo built-in: {lineStyle.Name}");
+                    }
+                }
+
+                if (idsToDelete.Count > 0)
+                {
+                    Debug.WriteLine($"Eliminando {idsToDelete.Count} estilos de línea personalizados");
+                    doc.Delete(idsToDelete);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error eliminando Line Styles personalizados: {ex.Message}");
+            }
+        }
+
+        private void CrearNuevosLineStyles(Document doc)
+        {
+            try
+            {
+                // Obtener la categoría principal de líneas
+                Category linesCategory = doc.Settings.Categories.get_Item(BuiltInCategory.OST_Lines);
+
+                // Lista de nuevos estilos a crear según tu tabla
+                var nuevosEstilos = new List<string>
+        {
+            "#1 Discontinua", "#1 Solida", "#1 Solida Roja",
+            "#2 Discontinua", "#2 Solida", "#2 Solida Roja",
+            "#3 Discontinua", "#3 Solida", "#3 Solida Roja"
+            
+        };
+
+                foreach (string nombreEstilo in nuevosEstilos)
+                {
+                    // Verificar si el estilo ya existe
+                    if (!ExisteLineStyle(linesCategory, nombreEstilo))
+                    {
+                        // Crear nueva subcategoría (Line Style)
+                        Category nuevoEstilo = doc.Settings.Categories.NewSubcategory(linesCategory, nombreEstilo);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error creando nuevos Line Styles: {ex.Message}");
+            }
+        }
+
+        private bool ExisteLineStyle(Category linesCategory, string nombreEstilo)
+        {
+            foreach (Category subCat in linesCategory.SubCategories)
+            {
+                if (subCat.Name == nombreEstilo)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private void ConfigurarPropiedadesLineStyles(Document doc)
+        {
+            try
+            {
+                Category linesCategory = doc.Settings.Categories.get_Item(BuiltInCategory.OST_Lines);
+
+                foreach (Category lineStyle in linesCategory.SubCategories)
+                {
+                    ConfigurarPropiedadesIndividuales(doc, lineStyle);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error configurando propiedades de Line Styles: {ex.Message}");
+            }
+        }
+
+        private void ConfigurarPropiedadesIndividuales(Document doc, Category lineStyle)
+        {
+            try
+            {
+                string nombreEstilo = lineStyle.Name;
+
+                // Configurar según la tabla que proporcionaste
+                switch (nombreEstilo)
+                {
+                    case "#1 Discontinua":
+                        ConfigurarEstilo(doc, lineStyle, 1, new Color(0, 0, 0), "Linea Discontinua");
+                        break;
+                    case "#1 Solida":
+                        ConfigurarEstilo(doc, lineStyle, 1, new Color(0, 0, 0), "Solid");
+                        break;
+                    case "#1 Solida Roja":
+                        ConfigurarEstilo(doc, lineStyle, 1, new Color(255, 0, 0), "Solid");
+                        break;
+                    case "#2 Discontinua":
+                        ConfigurarEstilo(doc, lineStyle, 2, new Color(0, 0, 0), "Linea Discontinua");
+                        break;
+                    case "#2 Solida":
+                        ConfigurarEstilo(doc, lineStyle, 2, new Color(0, 0, 0), "Solid");
+                        break;
+                    case "#2 Solida Roja":
+                        ConfigurarEstilo(doc, lineStyle, 2, new Color(255, 0, 0), "Solid");
+                        break;
+                    case "#3 Discontinua":
+                        ConfigurarEstilo(doc, lineStyle, 3, new Color(0, 0, 0), "Linea Discontinua");
+                        break;
+                    case "#3 Solida":
+                        ConfigurarEstilo(doc, lineStyle, 3, new Color(0, 0, 0), "Solid");
+                        break;
+                    case "#3 Solida Roja":
+                        ConfigurarEstilo(doc, lineStyle, 3, new Color(255, 0, 0), "Solid");
+                        break;
+                    case "<Boceto>":
+                    case "<Sketch>":
+                    //    ConfigurarEstilo(doc, lineStyle, 2, new Color(255, 0, 255), "Solid");
+                    //    break;
+                    //case "<Contorno de carga basada en área>":
+                    //    ConfigurarEstilo(doc, lineStyle, 1, new Color(0, 0, 0), "Solid");
+                    //    break;
+                    case "<Contorno de área>":
+                    case "<Area Boundary>":
+                        ConfigurarEstilo(doc, lineStyle, 2, new Color(128, 0, 255), "Solid");
+                        break;
+                    //case "<Derribado>":
+                    //case "<Demolished>":
+                    //    ConfigurarEstilo(doc, lineStyle, 1, new Color(0, 0, 0), "Solid");
+                    //    break;
+                    //case "<Eje de rotación>":
+                    //case "<Axis of Rotation>":
+                    //    ConfigurarEstilo(doc, lineStyle, 2, new Color(0, 0, 255), "Solid");
+                    //    break;
+                    case "<Eje>":
+                    case "<Centerline>":
+                        ConfigurarEstilo(doc, lineStyle, 1, new Color(0, 0, 0), "Solid");
+                        break;
+                    //case "<Elevado>":
+                    //case "<Overhead>":
+                    //    ConfigurarEstilo(doc, lineStyle, 3, new Color(0, 0, 0), "Solid");
+                    //    break;
+                    //case "<Envolvente de mallazo>":
+                    //case "<Fabric Envelope>":
+                    //    ConfigurarEstilo(doc, lineStyle, 1, new Color(127, 127, 127), "Solid");
+                    //    break;
+                    case "<Líneas anchas>":
+                    case "<Wide Lines>":
+                        ConfigurarEstilo(doc, lineStyle, 1, new Color(0, 0, 0), "Solid");
+                        break;
+                    //case "<Líneas de aislamiento>":
+                    //case "<Insulation Batting Lines>":
+                    //    ConfigurarEstilo(doc, lineStyle, 1, new Color(0, 255, 0), "Solid");
+                    //    break;
+                    //case "<Líneas de camino del recorrido>":
+                    //case "<Path of Travel Lines>":
+                    //    ConfigurarEstilo(doc, lineStyle, 1, new Color(0, 166, 0), "Solid");
+                    //    break;
+                    case "<Líneas finas>":
+                    case "<Thin Lines>":
+                        ConfigurarEstilo(doc, lineStyle, 1, new Color(0, 0, 0), "Solid");
+                        break;
+                    case "<Líneas medias>":
+                    case "<Medium Lines>":
+                        ConfigurarEstilo(doc, lineStyle, 2, new Color(0, 0, 0), "Solid");
+                        break;
+                    case "<Líneas ocultas>":
+                    case "<Hidden Lines>":
+                        ConfigurarEstilo(doc, lineStyle, 2, new Color(0, 166, 0), "Solid");
+                        break;
+                    //case "<Más allá>":
+                    //case "<Beyond>":
+                    //    ConfigurarEstilo(doc, lineStyle, 1, new Color(0, 166, 0), "Solid");
+                    //    break;
+                    //case "<Oculto>":
+                    //case "<Hidden>":
+                    //    ConfigurarEstilo(doc, lineStyle, 1, new Color(0, 0, 0), "Solid");
+                    //    break;
+                    //case "<Separación de espacios>":
+                    //case "<Space Separation>":
+                    //    ConfigurarEstilo(doc, lineStyle, 1, new Color(0, 255, 0), "Solid");
+                    //    break;
+                    //case "<Separación de habitación>":
+                    //case "<Room Separation>":
+                    //    ConfigurarEstilo(doc, lineStyle, 3, new Color(0, 255, 255), "Solid");
+                    //    break;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error configurando estilo individual {lineStyle.Name}: {ex.Message}");
+            }
+        }
+
+        private void ConfigurarEstilo(Document doc, Category lineStyle, int grosor, Color color, string linePatternName)
+        {
+            try
+            {
+                // Configurar grosor
+                lineStyle.SetLineWeight(grosor, GraphicsStyleType.Projection);
+
+                // Configurar color
+                lineStyle.LineColor = color;
+
+                // Configurar line pattern si no es "Solid"
+                if (linePatternName != "Solid")
+                {
+                    AsignarLinePatternALineStyle(doc, lineStyle, linePatternName);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error configurando estilo {lineStyle.Name}: {ex.Message}");
+            }
+        }
+
+        private void AsignarLinePatternALineStyle(Document doc, Category lineStyle, string linePatternName)
+        {
+            try
+            {
+                // Buscar el line pattern por nombre
+                FilteredElementCollector collector = new FilteredElementCollector(doc)
+                    .OfClass(typeof(LinePatternElement));
+
+                foreach (LinePatternElement pattern in collector)
+                {
+                    if (pattern.Name == linePatternName)
+                    {
+                        lineStyle.SetLinePatternId(pattern.Id, GraphicsStyleType.Projection);
+                        return;
+                    }
+                }
+
+                Debug.WriteLine($"Advertencia: No se encontró el line pattern '{linePatternName}' para el estilo '{lineStyle.Name}'");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error asignando line pattern '{linePatternName}' a estilo '{lineStyle.Name}': {ex.Message}");
             }
         }
 
