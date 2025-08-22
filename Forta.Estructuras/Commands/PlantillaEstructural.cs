@@ -56,9 +56,7 @@ namespace Forta.Estructuras.Commands
 
         #region BOTON DE ESTILOS DE LINEA
 
-        #region TODO REFERENTE A LINE PATTERNS(PATRONES DE LINEA)
-
-        #region AQUI SE APLICAN LOS PATRONES DE LINEA QUE SE CREARON
+        #region AQUI SE EJECUTA TODO EL CODIGO REFERENTE A LINEAS
         private void AplicarEstilosLinea(Document doc)
         {
             using (Transaction trans = new Transaction(doc, "Aplicar Estilos de Línea"))
@@ -81,6 +79,7 @@ namespace Forta.Estructuras.Commands
                     CrearLineaPatternProyeccion(doc);
                     CrearLineaPatternCorte(doc);
 
+
                     trans.Commit();
                 }
                 catch (Exception ex)
@@ -92,6 +91,8 @@ namespace Forta.Estructuras.Commands
         }
 
         #endregion
+
+        #region TODO REFERENTE A LINE PATTERNS(PATRONES DE LINEA)
 
         #region AQUI SE ELIMINAN LOS ESTILOS DE LINEA EXISTENTES
         private void EliminarLinePatterns(Document doc)
@@ -243,8 +244,6 @@ namespace Forta.Estructuras.Commands
 
         #endregion
 
-
-
         #endregion
 
         #region TODO LO REFERENTE A OBJECT STYLES (ESTILOS DE OBJETO)
@@ -253,18 +252,16 @@ namespace Forta.Estructuras.Commands
 
         #region ASIGNAR GROSORES DE LINEA
 
-        ////////PROYECCIÓN//////////
-
-        /* ATENCIÓN CLAUDE, AQUI QUIERO QUE HAGAS LO SIGUIENTE:
+        ////////PROYECCIÓN Y CORTE //////////
         
-        DENTRO DE LA PESTAÑA DE ESTILOS DE OBJETO, A TODOS LOS OBJETOS DE MODELO DE REVIT 
-        QUIERO QUE EL GROSOR DE LINEA EN PROYECCIÓN SEA 1 Y QUE EL GROSOR DE LÍNEA EN CORTE SEA 2
-       
-        */
+        /*
+        
+        @CHAT GPT, AQUI QUIERO EL CODIGO QUE EN LOS OBJECT STYLES DENTRO DE LOS OBJETOS DE MODELO
+        TODOS LOS ELEMENTOS TENGA EN PROYECCIÓN EL VALOR DE 1 Y EN CORTE EL VALOR DE 2
 
-        ///////////CORTE////////////
+         */
 
-
+    
         #endregion
 
         #endregion
