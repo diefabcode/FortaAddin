@@ -69,7 +69,7 @@ namespace Forta.Estructuras.Commands
                     EliminarLinePatterns(doc);
 
                     // 2. Crear los nuevos Line Patterns
-                    CrearLinePatternContinua(doc);
+                    CrearLinePatternDiscontinua(doc);
                     CrearLinePatternEje(doc);
                     CrearLinePatternPunto(doc);
                     CrearLineadeLLamada(doc);
@@ -79,6 +79,9 @@ namespace Forta.Estructuras.Commands
                     CrearLineaPatternProyeccion(doc);
                     CrearLineaPatternCorte(doc);
 
+                    // 3. Asignar grosores de líneas
+                    ConfigurarObjectStyles(doc);
+                    ConfigurarObjectStylesAnotacion(doc);
 
                     trans.Commit();
                 }
@@ -120,9 +123,9 @@ namespace Forta.Estructuras.Commands
         #endregion
 
         #region AQUI SE CREAN LOS ESTILOS DE LINEA
-        private void CrearLinePatternContinua(Document doc)
+        private void CrearLinePatternDiscontinua(Document doc)
         {
-            LinePattern linePattern = new LinePattern("Línea continua");
+            LinePattern linePattern = new LinePattern("Linea Discontinua");
             linePattern.SetSegments(new List<LinePatternSegment>
     {
         new LinePatternSegment(LinePatternSegmentType.Dash, 3.175 / 304.8), // 3.175mm convertido a pies
@@ -160,7 +163,7 @@ namespace Forta.Estructuras.Commands
 
         private void CrearLineadeLLamada(Document doc)
         {
-            LinePattern linePattern = new LinePattern("Linea de llamada");
+            LinePattern linePattern = new LinePattern("Linea de Llamada");
             linePattern.SetSegments(new List<LinePatternSegment>
     {
         new LinePatternSegment(LinePatternSegmentType.Dash, 15 / 304.8), // 15mm
@@ -252,21 +255,183 @@ namespace Forta.Estructuras.Commands
 
         #region ASIGNAR GROSORES DE LINEA
 
-        ////////PROYECCIÓN Y CORTE //////////
-        
-        /*
-        
-        @CHAT GPT, AQUI QUIERO EL CODIGO QUE EN LOS OBJECT STYLES DENTRO DE LOS OBJETOS DE MODELO
-        TODOS LOS ELEMENTOS TENGA EN PROYECCIÓN EL VALOR DE 1 Y EN CORTE EL VALOR DE 2
+        //OBJETOS DE MODELO//
+        private void ConfigurarObjectStyles(Document doc)
+        {
+            try
+            {
+                //Obtener todas las categorías del modelo
+                Categories categories = doc.Settings.Categories;
 
-         */
+                foreach(Category category in categories)
+                    {
+                    //Solo procesar categorias de modelo (no anotación)
+                    if (category.CategoryType == CategoryType.Model && category.CanAddSubcategory)
+                    {
+                        ConfigurarGrosoresCategoria(category);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error al confugurar Object Styles: {ex.Message}");
+            }
+        }
 
-    
+        private void ConfigurarGrosoresCategoria(Category category)
+        {
+            try
+            {
+                // Configurar grosor de proyección = 1
+                if (category.GetLineWeight(GraphicsStyleType.Projection) != 1)
+                {
+                    category.SetLineWeight(1, GraphicsStyleType.Projection);
+                }
+
+                // Configurar grosor de corte = 2
+                if (category.GetLineWeight(GraphicsStyleType.Cut) != 2)
+                {
+                    category.SetLineWeight(2, GraphicsStyleType.Cut);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Si hay error con una categoría específica, continuamos con las demás
+                Debug.WriteLine($"Error configurando categoría {category.Name}: {ex.Message}");
+            }
+        }
+
+        //OBJETOS DE ANOTACIÓN//
+
         #endregion
 
         #endregion
 
         #region OBJETOS DE ANOTACIÓN
+
+        private void ConfigurarObjectStylesAnotacion(Document doc)
+        {
+            try
+            {
+                // Obtener todas las categorías de anotación
+                Categories categories = doc.Settings.Categories;
+
+                foreach (Category category in categories)
+                {
+                    // Solo procesar categorías de anotación
+                    if (category.CategoryType == CategoryType.Annotation)
+                    {
+                        // Configurar grosor de proyección = 1 para todas
+                        ConfigurarGrosorAnotacion(category);
+
+                        // Configurar line patterns específicos
+                        ConfigurarLinePatternAnotacion(doc, category);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error al configurar Object Styles de anotación: {ex.Message}");
+            }
+        }
+
+        private void ConfigurarGrosorAnotacion(Category category)
+        {
+            try
+            {
+                // Configurar grosor de proyección = 1 para todas las categorías de anotación
+                if (category.GetLineWeight(GraphicsStyleType.Projection) != 1)
+                {
+                    category.SetLineWeight(1, GraphicsStyleType.Projection);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error configurando grosor para categoría de anotación {category.Name}: {ex.Message}");
+            }
+        }
+
+        private void ConfigurarLinePatternAnotacion(Document doc, Category category)
+        {
+            try
+            {
+                string linePatternName = "";
+
+                // Determinar qué line pattern usar según el nombre de la categoría (inglés y español)
+                switch (category.Name)
+                {
+                    case "Callout Boundary":
+                    case "Contorno de llamada":
+                        linePatternName = "Linea de llamada";
+                        break;
+                    case "Displacement Path":
+                    case "Camino de desplazamiento":
+                        linePatternName = "Linea Punto";
+                        break;
+                    case "Plan Region":
+                    case "Región de plano":
+                        linePatternName = "Línea continua";
+                        break;
+                    case "Reference Planes":
+                    case "Planos de referencia":
+                        linePatternName = "Linea de Planos de Referencia";
+                        break;
+                    case "Scope Boxes":
+                    case "Cajas de referencia":
+                        linePatternName = "Linea de Cajas de Referencia";
+                        break;
+                    case "Section Line":
+                    case "Línea de sección":
+                        linePatternName = "Linea de Corte";
+                        break;
+                }
+
+                // Si se encontró un patrón específico, aplicarlo
+                if (!string.IsNullOrEmpty(linePatternName))
+                {
+                    AsignarLinePattern(doc, category, linePatternName);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error configurando line pattern para categoría {category.Name}: {ex.Message}");
+            }
+        }
+
+        private void AsignarLinePattern(Document doc, Category category, string linePatternName)
+        {
+            try
+            {
+                // Buscar el line pattern por nombre
+                FilteredElementCollector collector = new FilteredElementCollector(doc)
+                    .OfClass(typeof(LinePatternElement));
+
+                LinePatternElement linePatternElement = null;
+
+                foreach (LinePatternElement pattern in collector)
+                {
+                    if (pattern.Name == linePatternName)
+                    {
+                        linePatternElement = pattern;
+                        break;
+                    }
+                }
+
+                if (linePatternElement != null)
+                {
+                    // Asignar el line pattern a la categoría
+                    category.SetLinePatternId(linePatternElement.Id, GraphicsStyleType.Projection);
+                }
+                else
+                {
+                    Debug.WriteLine($"Advertencia: No se encontró el line pattern '{linePatternName}' para la categoría '{category.Name}'");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error asignando line pattern '{linePatternName}' a categoría '{category.Name}': {ex.Message}");
+            }
+        }
 
         #endregion
 
