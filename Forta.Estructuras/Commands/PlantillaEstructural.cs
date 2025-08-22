@@ -74,6 +74,7 @@ namespace Forta.Estructuras.Commands
                     CrearLinePatternContinua(doc);
                     CrearLinePatternEje(doc);
                     CrearLinePatternPunto(doc);
+                    CrearLineadeLLamada(doc);
 
                     trans.Commit();
                 }
@@ -146,6 +147,23 @@ namespace Forta.Estructuras.Commands
     {
         new LinePatternSegment(LinePatternSegmentType.Dash, 4.7625 / 304.8), // 4.7625mm
         new LinePatternSegment(LinePatternSegmentType.Space, 2.3813 / 304.8) // 2.3813mm
+    });
+
+            LinePatternElement.Create(doc, linePattern);
+        }
+
+        private void CrearLineadeLLamada(Document doc)
+        {
+            LinePattern linePattern = new LinePattern("Linea de llamada");
+            linePattern.SetSegments(new List<LinePatternSegment>
+    {
+        new LinePatternSegment(LinePatternSegmentType.Dash, 15 / 304.8), // 15mm
+        new LinePatternSegment(LinePatternSegmentType.Space, 2.5 / 304.8), // 2.5mm
+        new LinePatternSegment(LinePatternSegmentType.Dash, 5/304.8), // 5
+        new LinePatternSegment(LinePatternSegmentType.Space, 2.5 / 304.8), // 2.5mm
+        new LinePatternSegment(LinePatternSegmentType.Dash, 5/304.8), // 5
+        new LinePatternSegment(LinePatternSegmentType.Space, 2.5 / 304.8) // 2.5mm
+
     });
 
             LinePatternElement.Create(doc, linePattern);

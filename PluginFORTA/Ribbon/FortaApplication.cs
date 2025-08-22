@@ -1,6 +1,7 @@
 #region Namespaces
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
@@ -13,9 +14,9 @@ using Forta.Core;
 using Forta.Core.Utils;
 using Forta.Estructuras.Commands;
 using Forta.HVAC.Commands;
-using Forta.IHS.Commands;
 using Forta.IE.Commands;
 using Forta.IESP.Commands;
+using Forta.IHS.Commands;
 
 
 #endregion
@@ -26,6 +27,8 @@ namespace Forta.App.Ribbon
     {
         public Result OnStartup(UIControlledApplication app)
         {
+        
+
             //CREACIÓN DE LA NUEVA PESTAÑA
             app.CreateRibbonTab("FORTA");
 
