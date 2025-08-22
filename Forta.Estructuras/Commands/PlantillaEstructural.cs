@@ -1,7 +1,10 @@
-#region Namespaces
+Ôªø#region Namespaces
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
+using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using Autodesk.Revit.ApplicationServices;
 using Autodesk.Revit.Attributes;
@@ -9,7 +12,6 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
 using Forta.UI.WinForms;
-using System.Linq;
 
 #endregion
 
@@ -35,12 +37,17 @@ namespace Forta.Estructuras.Commands
                     if (accion == "EstilosLinea")
                     {
                         AplicarEstilosLinea(commandData.Application.ActiveUIDocument.Document);
-                        TaskDialog.Show("…xito", "Estilos de lÌnea aplicados correctamente.");
+                        TaskDialog.Show("√âxito", "Estilos de l√≠nea aplicados correctamente.");
                     }
                     else if (accion == "InicializarFamilias")
                     {
                         InicializarFamiliasSuelos(commandData.Application.ActiveUIDocument.Document);
                         
+                    }
+                    else if (accion == "EstilosTextoCotas")
+                    {
+                        AplicarTextoCotas(commandData.Application.ActiveUIDocument.Document);
+
                     }
                 }
 
@@ -59,7 +66,7 @@ namespace Forta.Estructuras.Commands
         #region AQUI SE EJECUTA TODO EL CODIGO REFERENTE A LINEAS
         private void AplicarEstilosLinea(Document doc)
         {
-            using (Transaction trans = new Transaction(doc, "Aplicar Estilos de LÌnea"))
+            using (Transaction trans = new Transaction(doc, "Aplicar Estilos de L√≠nea"))
             {
                 trans.Start();
 
@@ -79,7 +86,7 @@ namespace Forta.Estructuras.Commands
                     CrearLineaPatternProyeccion(doc);
                     CrearLineaPatternCorte(doc);
 
-                    // 3. Asignar grosores de lÌneas
+                    // 3. Asignar grosores de l√≠neas
                     ConfigurarObjectStyles(doc);
                     ConfigurarObjectStylesAnotacion(doc);
 
@@ -92,7 +99,7 @@ namespace Forta.Estructuras.Commands
                 catch (Exception ex)
                 {
                     trans.RollBack();
-                    throw new Exception($"Error al aplicar estilos de lÌnea: {ex.Message}");
+                    throw new Exception($"Error al aplicar estilos de l√≠nea: {ex.Message}");
                 }
             }
         }
@@ -141,7 +148,7 @@ namespace Forta.Estructuras.Commands
 
         private void CrearLinePatternEje(Document doc)
         {
-            LinePattern linePattern = new LinePattern("LÌnea de eje");
+            LinePattern linePattern = new LinePattern("L√≠nea de eje");
             linePattern.SetSegments(new List<LinePatternSegment>
     {
         new LinePatternSegment(LinePatternSegmentType.Dash, 12.7 / 304.8),   // 12.7mm
@@ -223,7 +230,7 @@ namespace Forta.Estructuras.Commands
 
         private void CrearLineaPatternProyeccion(Document doc)
         {
-            LinePattern linePattern = new LinePattern("Linea de ProyecciÛn");
+            LinePattern linePattern = new LinePattern("Linea de Proyecci√≥n");
             linePattern.SetSegments(new List<LinePatternSegment>
     {
         new LinePatternSegment(LinePatternSegmentType.Dash, 2 / 304.8), // 2mm
@@ -264,12 +271,12 @@ namespace Forta.Estructuras.Commands
         {
             try
             {
-                //Obtener todas las categorÌas del modelo
+                //Obtener todas las categor√≠as del modelo
                 Categories categories = doc.Settings.Categories;
 
                 foreach(Category category in categories)
                     {
-                    //Solo procesar categorias de modelo (no anotaciÛn)
+                    //Solo procesar categorias de modelo (no anotaci√≥n)
                     if (category.CategoryType == CategoryType.Model && category.CanAddSubcategory)
                     {
                         ConfigurarGrosoresCategoria(category);
@@ -286,7 +293,7 @@ namespace Forta.Estructuras.Commands
         {
             try
             {
-                // Configurar grosor de proyecciÛn = 1
+                // Configurar grosor de proyecci√≥n = 1
                 if (category.GetLineWeight(GraphicsStyleType.Projection) != 1)
                 {
                     category.SetLineWeight(1, GraphicsStyleType.Projection);
@@ -300,42 +307,42 @@ namespace Forta.Estructuras.Commands
             }
             catch (Exception ex)
             {
-                // Si hay error con una categorÌa especÌfica, continuamos con las dem·s
-                Debug.WriteLine($"Error configurando categorÌa {category.Name}: {ex.Message}");
+                // Si hay error con una categor√≠a espec√≠fica, continuamos con las dem√°s
+                Debug.WriteLine($"Error configurando categor√≠a {category.Name}: {ex.Message}");
             }
         }
 
-        //OBJETOS DE ANOTACI”N//
+        //OBJETOS DE ANOTACI√ìN//
 
         #endregion
 
         #endregion
 
-        #region OBJETOS DE ANOTACI”N
+        #region OBJETOS DE ANOTACI√ìN
 
         private void ConfigurarObjectStylesAnotacion(Document doc)
         {
             try
             {
-                // Obtener todas las categorÌas de anotaciÛn
+                // Obtener todas las categor√≠as de anotaci√≥n
                 Categories categories = doc.Settings.Categories;
 
                 foreach (Category category in categories)
                 {
-                    // Solo procesar categorÌas de anotaciÛn
+                    // Solo procesar categor√≠as de anotaci√≥n
                     if (category.CategoryType == CategoryType.Annotation)
                     {
-                        // Configurar grosor de proyecciÛn = 1 para todas
+                        // Configurar grosor de proyecci√≥n = 1 para todas
                         ConfigurarGrosorAnotacion(category);
 
-                        // Configurar line patterns especÌficos
+                        // Configurar line patterns espec√≠ficos
                         ConfigurarLinePatternAnotacion(doc, category);
                     }
                 }
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error al configurar Object Styles de anotaciÛn: {ex.Message}");
+                throw new Exception($"Error al configurar Object Styles de anotaci√≥n: {ex.Message}");
             }
         }
 
@@ -343,7 +350,7 @@ namespace Forta.Estructuras.Commands
         {
             try
             {
-                // Configurar grosor de proyecciÛn = 1 para todas las categorÌas de anotaciÛn
+                // Configurar grosor de proyecci√≥n = 1 para todas las categor√≠as de anotaci√≥n
                 if (category.GetLineWeight(GraphicsStyleType.Projection) != 1)
                 {
                     category.SetLineWeight(1, GraphicsStyleType.Projection);
@@ -351,7 +358,7 @@ namespace Forta.Estructuras.Commands
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error configurando grosor para categorÌa de anotaciÛn {category.Name}: {ex.Message}");
+                Debug.WriteLine($"Error configurando grosor para categor√≠a de anotaci√≥n {category.Name}: {ex.Message}");
             }
         }
 
@@ -361,7 +368,7 @@ namespace Forta.Estructuras.Commands
             {
                 string linePatternName = "";
 
-                // Determinar quÈ line pattern usar seg˙n el nombre de la categorÌa (inglÈs y espaÒol)
+                // Determinar qu√© line pattern usar seg√∫n el nombre de la categor√≠a (ingl√©s y espa√±ol)
                 switch (category.Name)
                 {
                     case "Callout Boundary":
@@ -373,8 +380,8 @@ namespace Forta.Estructuras.Commands
                         linePatternName = "Linea Punto";
                         break;
                     case "Plan Region":
-                    case "RegiÛn de plano":
-                        linePatternName = "LÌnea continua";
+                    case "Regi√≥n de plano":
+                        linePatternName = "L√≠nea continua";
                         break;
                     case "Reference Planes":
                     case "Planos de referencia":
@@ -385,12 +392,12 @@ namespace Forta.Estructuras.Commands
                         linePatternName = "Linea de Cajas de Referencia";
                         break;
                     case "Section Line":
-                    case "LÌnea de secciÛn":
+                    case "L√≠nea de secci√≥n":
                         linePatternName = "Linea de Corte";
                         break;
                 }
 
-                // Si se encontrÛ un patrÛn especÌfico, aplicarlo
+                // Si se encontr√≥ un patr√≥n espec√≠fico, aplicarlo
                 if (!string.IsNullOrEmpty(linePatternName))
                 {
                     AsignarLinePattern(doc, category, linePatternName);
@@ -398,7 +405,7 @@ namespace Forta.Estructuras.Commands
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error configurando line pattern para categorÌa {category.Name}: {ex.Message}");
+                Debug.WriteLine($"Error configurando line pattern para categor√≠a {category.Name}: {ex.Message}");
             }
         }
 
@@ -423,17 +430,17 @@ namespace Forta.Estructuras.Commands
 
                 if (linePatternElement != null)
                 {
-                    // Asignar el line pattern a la categorÌa
+                    // Asignar el line pattern a la categor√≠a
                     category.SetLinePatternId(linePatternElement.Id, GraphicsStyleType.Projection);
                 }
                 else
                 {
-                    Debug.WriteLine($"Advertencia: No se encontrÛ el line pattern '{linePatternName}' para la categorÌa '{category.Name}'");
+                    Debug.WriteLine($"Advertencia: No se encontr√≥ el line pattern '{linePatternName}' para la categor√≠a '{category.Name}'");
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error asignando line pattern '{linePatternName}' a categorÌa '{category.Name}': {ex.Message}");
+                Debug.WriteLine($"Error asignando line pattern '{linePatternName}' a categor√≠a '{category.Name}': {ex.Message}");
             }
         }
 
@@ -441,7 +448,7 @@ namespace Forta.Estructuras.Commands
 
         #endregion
 
-        #region ESTILOS DE LÕNEA
+        #region ESTILOS DE L√çNEA
 
         #region CONFIGURACION DE LINE STYLES (ESTILOS DE LINEA)
 
@@ -449,13 +456,13 @@ namespace Forta.Estructuras.Commands
         {
             try
             {
-                // Obtener la categorÌa principal de lÌneas
+                // Obtener la categor√≠a principal de l√≠neas
                 Category linesCategory = doc.Settings.Categories.get_Item(BuiltInCategory.OST_Lines);
 
                 // PRIMERO: Eliminar todos los estilos personalizados (que no empiecen con "<")
                 EliminarLineStylesPersonalizados(doc, linesCategory.SubCategories, null);
 
-                // SEGUNDO: Crear los nuevos estilos de lÌnea
+                // SEGUNDO: Crear los nuevos estilos de l√≠nea
                 CrearNuevosLineStyles(doc);
 
                 // TERCERO: Configurar propiedades de todos los estilos
@@ -489,7 +496,7 @@ namespace Forta.Estructuras.Commands
 
                 if (idsToDelete.Count > 0)
                 {
-                    Debug.WriteLine($"Eliminando {idsToDelete.Count} estilos de lÌnea personalizados");
+                    Debug.WriteLine($"Eliminando {idsToDelete.Count} estilos de l√≠nea personalizados");
                     doc.Delete(idsToDelete);
                 }
             }
@@ -503,10 +510,10 @@ namespace Forta.Estructuras.Commands
         {
             try
             {
-                // Obtener la categorÌa principal de lÌneas
+                // Obtener la categor√≠a principal de l√≠neas
                 Category linesCategory = doc.Settings.Categories.get_Item(BuiltInCategory.OST_Lines);
 
-                // Lista de nuevos estilos a crear seg˙n tu tabla
+                // Lista de nuevos estilos a crear seg√∫n tu tabla
                 var nuevosEstilos = new List<string>
         {
             "#1 Discontinua", "#1 Solida", "#1 Solida Roja",
@@ -520,7 +527,7 @@ namespace Forta.Estructuras.Commands
                     // Verificar si el estilo ya existe
                     if (!ExisteLineStyle(linesCategory, nombreEstilo))
                     {
-                        // Crear nueva subcategorÌa (Line Style)
+                        // Crear nueva subcategor√≠a (Line Style)
                         Category nuevoEstilo = doc.Settings.Categories.NewSubcategory(linesCategory, nombreEstilo);
                     }
                 }
@@ -566,7 +573,7 @@ namespace Forta.Estructuras.Commands
             {
                 string nombreEstilo = lineStyle.Name;
 
-                // Configurar seg˙n la tabla que proporcionaste
+                // Configurar seg√∫n la tabla que proporcionaste
                 switch (nombreEstilo)
                 {
                     case "#1 Discontinua":
@@ -600,10 +607,10 @@ namespace Forta.Estructuras.Commands
                     case "<Sketch>":
                     //    ConfigurarEstilo(doc, lineStyle, 2, new Color(255, 0, 255), "Solid");
                     //    break;
-                    //case "<Contorno de carga basada en ·rea>":
+                    //case "<Contorno de carga basada en √°rea>":
                     //    ConfigurarEstilo(doc, lineStyle, 1, new Color(0, 0, 0), "Solid");
                     //    break;
-                    case "<Contorno de ·rea>":
+                    case "<Contorno de √°rea>":
                     case "<Area Boundary>":
                         ConfigurarEstilo(doc, lineStyle, 2, new Color(128, 0, 255), "Solid");
                         break;
@@ -611,7 +618,7 @@ namespace Forta.Estructuras.Commands
                     //case "<Demolished>":
                     //    ConfigurarEstilo(doc, lineStyle, 1, new Color(0, 0, 0), "Solid");
                     //    break;
-                    //case "<Eje de rotaciÛn>":
+                    //case "<Eje de rotaci√≥n>":
                     //case "<Axis of Rotation>":
                     //    ConfigurarEstilo(doc, lineStyle, 2, new Color(0, 0, 255), "Solid");
                     //    break;
@@ -627,31 +634,31 @@ namespace Forta.Estructuras.Commands
                     //case "<Fabric Envelope>":
                     //    ConfigurarEstilo(doc, lineStyle, 1, new Color(127, 127, 127), "Solid");
                     //    break;
-                    case "<LÌneas anchas>":
+                    case "<L√≠neas anchas>":
                     case "<Wide Lines>":
                         ConfigurarEstilo(doc, lineStyle, 1, new Color(0, 0, 0), "Solid");
                         break;
-                    //case "<LÌneas de aislamiento>":
+                    //case "<L√≠neas de aislamiento>":
                     //case "<Insulation Batting Lines>":
                     //    ConfigurarEstilo(doc, lineStyle, 1, new Color(0, 255, 0), "Solid");
                     //    break;
-                    //case "<LÌneas de camino del recorrido>":
+                    //case "<L√≠neas de camino del recorrido>":
                     //case "<Path of Travel Lines>":
                     //    ConfigurarEstilo(doc, lineStyle, 1, new Color(0, 166, 0), "Solid");
                     //    break;
-                    case "<LÌneas finas>":
+                    case "<L√≠neas finas>":
                     case "<Thin Lines>":
                         ConfigurarEstilo(doc, lineStyle, 1, new Color(0, 0, 0), "Solid");
                         break;
-                    case "<LÌneas medias>":
+                    case "<L√≠neas medias>":
                     case "<Medium Lines>":
                         ConfigurarEstilo(doc, lineStyle, 2, new Color(0, 0, 0), "Solid");
                         break;
-                    case "<LÌneas ocultas>":
+                    case "<L√≠neas ocultas>":
                     case "<Hidden Lines>":
                         ConfigurarEstilo(doc, lineStyle, 2, new Color(0, 166, 0), "Solid");
                         break;
-                    //case "<M·s all·>":
+                    //case "<M√°s all√°>":
                     //case "<Beyond>":
                     //    ConfigurarEstilo(doc, lineStyle, 1, new Color(0, 166, 0), "Solid");
                     //    break;
@@ -659,11 +666,11 @@ namespace Forta.Estructuras.Commands
                     //case "<Hidden>":
                     //    ConfigurarEstilo(doc, lineStyle, 1, new Color(0, 0, 0), "Solid");
                     //    break;
-                    //case "<SeparaciÛn de espacios>":
+                    //case "<Separaci√≥n de espacios>":
                     //case "<Space Separation>":
                     //    ConfigurarEstilo(doc, lineStyle, 1, new Color(0, 255, 0), "Solid");
                     //    break;
-                    //case "<SeparaciÛn de habitaciÛn>":
+                    //case "<Separaci√≥n de habitaci√≥n>":
                     //case "<Room Separation>":
                     //    ConfigurarEstilo(doc, lineStyle, 3, new Color(0, 255, 255), "Solid");
                     //    break;
@@ -714,7 +721,7 @@ namespace Forta.Estructuras.Commands
                     }
                 }
 
-                Debug.WriteLine($"Advertencia: No se encontrÛ el line pattern '{linePatternName}' para el estilo '{lineStyle.Name}'");
+                Debug.WriteLine($"Advertencia: No se encontr√≥ el line pattern '{linePatternName}' para el estilo '{lineStyle.Name}'");
             }
             catch (Exception ex)
             {
@@ -728,7 +735,329 @@ namespace Forta.Estructuras.Commands
 
         #endregion
 
-        #region CREACION DE MATERIALES
+        #region BOTON DE TEXTOS Y COTAS
+
+        private void AplicarTextoCotas(Document doc)
+        {
+            using (Transaction trans = new Transaction(doc, "Aplicar Texto y Cotas"))
+            {
+               trans.Start();
+
+                CrearTextos(doc, "FI Flecha Arial 2mm", "Arial", 2, new Color(0, 0, 0), 1, false, false, false, 1.0, 1.5, 8.0,"flecha");
+                CrearTextos(doc, "FI Punto Arial 2mm", "Arial", 2, new Color(0, 0, 0), 1, false, false, false, 1.0, 1.5, 8.0, "punto");
+                CrearTextos(doc, "FI Diagonal Arial 2mm", "Arial", 2, new Color(0, 0, 0), 1, false, false, false, 1.0, 1.5, 8.0, "diagonal");
+
+                trans.Commit();
+            }
+        }
+
+        #region CREAR TEXTOS
+
+        /// <summary>
+        /// M√©todo reutilizable para crear diferentes tipos de texto con propiedades personalizables
+        /// Reusable method to create different text types with customizable properties
+        /// </summary>
+        /// <param name="doc">Documento de Revit / Revit Document</param>
+        /// <param name="nombreEstilo">Nombre del estilo de texto / Text style name</param>
+        /// <param name="tipoLetra">Tipo de letra (ej: Arial, Times New Roman) / Font type</param>
+        /// <param name="tama√±oTextoMm">Tama√±o del texto en mil√≠metros / Text size in millimeters</param>
+        /// <param name="color">Color del texto / Text color</param>
+        /// <param name="grosorLinea">Grosor de l√≠nea (1-16) / Line weight</param>
+        /// <param name="negrita">Si el texto debe ser negrita / Bold text</param>
+        /// <param name="cursiva">Si el texto debe ser cursiva / Italic text</param>
+        /// <param name="subrayado">Si el texto debe ser subrayado / Underlined text</param>
+        /// <param name="factorAnchura">Factor de anchura del texto / Text width factor</param>
+        /// <param name="desfaseDirectrizMm">Desfase de l√≠nea directriz en mil√≠metros / Leader offset in mm</param>
+        /// <param name="distanciaTabulacionMm">Distancia de tabulaci√≥n en mil√≠metros / Tab distance in mm</param>
+        /// <param name="tipoFlecha">Tipo de flecha: "flecha", "punto", "diagonal" / Arrowhead type</param>
+        private void CrearTextos(Document doc, string nombreEstilo, string tipoLetra, double tama√±oTextoMm,
+                                Color color, int grosorLinea, bool negrita, bool cursiva, bool subrayado,
+                                double factorAnchura, double desfaseDirectrizMm, double distanciaTabulacionMm,
+                                string tipoFlecha)
+        {
+            try
+            {
+                // Verificar si el estilo ya existe / Check if style already exists
+                FilteredElementCollector collector = new FilteredElementCollector(doc)
+                    .OfClass(typeof(TextNoteType));
+
+                TextNoteType estiloExistente = null;
+                foreach (TextNoteType tipo in collector)
+                {
+                    if (tipo.Name == nombreEstilo)
+                    {
+                        estiloExistente = tipo;
+                        break;
+                    }
+                }
+
+                TextNoteType nuevoEstilo;
+
+                if (estiloExistente != null)
+                {
+                    // Si existe, usar el existente / If exists, use existing
+                    nuevoEstilo = estiloExistente;
+                    Debug.WriteLine($"Style '{nombreEstilo}' already exists, updating properties... / Estilo '{nombreEstilo}' ya existe, actualizando propiedades...");
+                }
+                else
+                {
+                    // Buscar un estilo base para duplicar / Find base style to duplicate
+                    TextNoteType estiloBase = collector.Cast<TextNoteType>().FirstOrDefault();
+
+                    if (estiloBase == null)
+                    {
+                        throw new InvalidOperationException("No base text style found for duplication. / No se encontr√≥ ning√∫n estilo de texto base para duplicar.");
+                    }
+
+                    // Duplicar el estilo base / Duplicate base style
+                    nuevoEstilo = estiloBase.Duplicate(nombreEstilo) as TextNoteType;
+                    Debug.WriteLine($"Style '{nombreEstilo}' created successfully. / Estilo '{nombreEstilo}' creado exitosamente.");
+                }
+
+                // Configurar las propiedades del estilo / Configure style properties
+                ConfigurarPropiedadesTextoPersonalizado(nuevoEstilo, tipoLetra, tama√±oTextoMm, color, grosorLinea,
+                                                       negrita, cursiva, subrayado, factorAnchura, desfaseDirectrizMm,
+                                                       distanciaTabulacionMm, tipoFlecha);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error creating text style '{nombreEstilo}' / Error al crear estilo de texto '{nombreEstilo}': {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Configura todas las propiedades de un estilo de texto de manera personalizable
+        /// Configures all properties of a text style in a customizable way
+        /// </summary>
+        private void ConfigurarPropiedadesTextoPersonalizado(TextNoteType estiloTexto, string tipoLetra, double tama√±oTextoMm,
+                                                            Color color, int grosorLinea, bool negrita, bool cursiva,
+                                                            bool subrayado, double factorAnchura, double desfaseDirectrizMm,
+                                                            double distanciaTabulacionMm, string tipoFlecha)
+        {
+            try
+            {
+                // === CONFIGURACI√ìN DE GR√ÅFICOS / GRAPHICS CONFIGURATION ===
+
+                // Color
+                Parameter colorParam = estiloTexto.get_Parameter(BuiltInParameter.LINE_COLOR);
+                if (colorParam != null && !colorParam.IsReadOnly)
+                {
+                    // Convertir Color a entero RGB / Convert Color to RGB integer
+                    int colorRGB = (color.Red << 16) | (color.Green << 8) | color.Blue;
+                    colorParam.Set(colorRGB);
+                }
+
+                // Grosor de l√≠nea / Line weight
+                Parameter lineWeightParam = estiloTexto.get_Parameter(BuiltInParameter.LINE_PEN);
+                if (lineWeightParam != null && !lineWeightParam.IsReadOnly)
+                {
+                    lineWeightParam.Set(grosorLinea);
+                }
+
+                // Fondo: Transparente / Background: Transparent
+                Parameter backgroundParam = estiloTexto.get_Parameter(BuiltInParameter.TEXT_BACKGROUND);
+                if (backgroundParam != null && !backgroundParam.IsReadOnly)
+                {
+                    backgroundParam.Set(0); // 0 = Transparent/Transparente, 1 = Opaque/Opaco
+                }
+
+                // Mostrar borde: Desactivado / Show border: Disabled
+                Parameter showBorderParam = estiloTexto.get_Parameter(BuiltInParameter.TEXT_BOX_VISIBILITY);
+                if (showBorderParam != null && !showBorderParam.IsReadOnly)
+                {
+                    showBorderParam.Set(0); // 0 = Disabled/Desactivado, 1 = Enabled/Activado
+                }
+
+                // Desfase de l√≠nea directriz / Leader line offset
+                Parameter leaderOffsetParam = estiloTexto.get_Parameter(BuiltInParameter.LEADER_OFFSET_SHEET);
+                if (leaderOffsetParam != null && !leaderOffsetParam.IsReadOnly)
+                {
+                    double offsetEnPies = UnitUtils.ConvertToInternalUnits(desfaseDirectrizMm, UnitTypeId.Millimeters);
+                    leaderOffsetParam.Set(offsetEnPies);
+                }
+
+                // === CONFIGURACI√ìN DE TEXTO / TEXT CONFIGURATION ===
+
+                // Tama√±o de texto / Text size
+                Parameter textSizeParam = estiloTexto.get_Parameter(BuiltInParameter.TEXT_SIZE);
+                if (textSizeParam != null && !textSizeParam.IsReadOnly)
+                {
+                    double tama√±oEnPies = UnitUtils.ConvertToInternalUnits(tama√±oTextoMm, UnitTypeId.Millimeters);
+                    textSizeParam.Set(tama√±oEnPies);
+                }
+
+                // Distancia de tabulaci√≥n / Tab distance
+                Parameter tabSizeParam = estiloTexto.get_Parameter(BuiltInParameter.TEXT_TAB_SIZE);
+                if (tabSizeParam != null && !tabSizeParam.IsReadOnly)
+                {
+                    double tabEnPies = UnitUtils.ConvertToInternalUnits(distanciaTabulacionMm, UnitTypeId.Millimeters);
+                    tabSizeParam.Set(tabEnPies);
+                }
+
+                // Tipo de letra / Font type
+                Parameter fontParam = estiloTexto.get_Parameter(BuiltInParameter.TEXT_FONT);
+                if (fontParam != null && !fontParam.IsReadOnly)
+                {
+                    fontParam.Set(tipoLetra);
+                }
+
+                // Negrita / Bold
+                Parameter boldParam = estiloTexto.get_Parameter(BuiltInParameter.TEXT_STYLE_BOLD);
+                if (boldParam != null && !boldParam.IsReadOnly)
+                {
+                    boldParam.Set(negrita ? 1 : 0);
+                }
+
+                // Cursiva / Italic
+                Parameter italicParam = estiloTexto.get_Parameter(BuiltInParameter.TEXT_STYLE_ITALIC);
+                if (italicParam != null && !italicParam.IsReadOnly)
+                {
+                    italicParam.Set(cursiva ? 1 : 0);
+                }
+
+                // Subrayado / Underline
+                Parameter underlineParam = estiloTexto.get_Parameter(BuiltInParameter.TEXT_STYLE_UNDERLINE);
+                if (underlineParam != null && !underlineParam.IsReadOnly)
+                {
+                    underlineParam.Set(subrayado ? 1 : 0);
+                }
+
+                // Factor de anchura / Width factor
+                Parameter widthFactorParam = estiloTexto.get_Parameter(BuiltInParameter.TEXT_WIDTH_SCALE);
+                if (widthFactorParam != null && !widthFactorParam.IsReadOnly)
+                {
+                    widthFactorParam.Set(factorAnchura);
+                }
+
+                // Configurar punta de flecha seg√∫n el tipo especificado / Configure arrowhead by type
+                ConfigurarPuntaFlechaPorTipo(estiloTexto, tipoFlecha);
+
+                Debug.WriteLine($"Properties for style '{estiloTexto.Name}' configured successfully. / Propiedades del estilo '{estiloTexto.Name}' configuradas exitosamente.");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error configuring properties for text '{estiloTexto.Name}' / Error al configurar propiedades del texto '{estiloTexto.Name}': {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Configura la punta de flecha seg√∫n el tipo especificado: "flecha", "punto", "diagonal"
+        /// Configures arrowhead by specified type: "flecha", "punto", "diagonal"
+        /// </summary>
+        private void ConfigurarPuntaFlechaPorTipo(TextNoteType estiloTexto, string tipoFlecha)
+        {
+            try
+            {
+                // Buscar arrowheads disponibles
+                var elementTypes = new FilteredElementCollector(estiloTexto.Document)
+                    .WhereElementIsElementType()
+                    .Cast<ElementType>()
+                    .Where(et => et.Category == null)
+                    .ToList();
+
+                var arrowheads = elementTypes.Where(et =>
+                {
+                    string name = et.Name;
+                    return name.Contains("grado") || name.Contains("degree") ||
+                           name.Contains("Flecha") || name.Contains("Arrow") ||
+                           name.Contains("Punto") || name.Contains("Dot") ||
+                           name.Contains("Diagonal") || name.Contains("Sin") || name.Contains("None");
+                }).ToList();
+
+                Element flechaSeleccionada = null;
+
+                switch (tipoFlecha.ToLower())
+                {
+                    case "flecha":
+                        // Prioridad: Flecha 15 grados rellenada
+                        flechaSeleccionada = arrowheads.FirstOrDefault(a =>
+                            a.Name.ToLower().Contains("flecha") &&
+                            a.Name.Contains("15") &&
+                            a.Name.ToLower().Contains("rellenada"));
+
+                        // Fallback ingl√©s: Arrow Filled 15 Degree
+                        if (flechaSeleccionada == null)
+                        {
+                            flechaSeleccionada = arrowheads.FirstOrDefault(a =>
+                                a.Name.ToLower().Contains("arrow") &&
+                                a.Name.ToLower().Contains("filled") &&
+                                a.Name.Contains("15"));
+                        }
+                        break;
+
+                    case "punto":
+                        // Buscar todos los puntos rellenos disponibles
+                        var puntosRellenos = arrowheads.Where(a =>
+                            (a.Name.ToLower().Contains("punto") && a.Name.ToLower().Contains("rellenado")) ||
+                            (a.Name.ToLower().Contains("dot") && a.Name.ToLower().Contains("filled"))
+                        ).ToList();
+
+                        // Priorizar de menor a mayor tama√±o
+                        string[] tama√±osPreferidos = { "1,5", "1.5", "1/16", "3", "3 mm", "1/8" };
+
+                        foreach (string tama√±o in tama√±osPreferidos)
+                        {
+                            flechaSeleccionada = puntosRellenos.FirstOrDefault(a => a.Name.Contains(tama√±o));
+                            if (flechaSeleccionada != null) break;
+                        }
+
+                        // Si no encuentra por tama√±o, usar el primero disponible
+                        if (flechaSeleccionada == null)
+                        {
+                            flechaSeleccionada = puntosRellenos.FirstOrDefault();
+                        }
+                        break;
+
+                    case "diagonal":
+                        // Buscar todas las diagonales disponibles
+                        var diagonales = arrowheads.Where(a =>
+                            a.Name.ToLower().Contains("diagonal")
+                        ).ToList();
+
+                        // Priorizar de menor a mayor tama√±o
+                        string[] tama√±osDiagonal = { "1/8", "1/4", "3", "3 mm", "5", "5 mm" };
+
+                        foreach (string tama√±o in tama√±osDiagonal)
+                        {
+                            flechaSeleccionada = diagonales.FirstOrDefault(a => a.Name.Contains(tama√±o));
+                            if (flechaSeleccionada != null) break;
+                        }
+
+                        // Si no encuentra por tama√±o, usar la primera disponible
+                        if (flechaSeleccionada == null)
+                        {
+                            flechaSeleccionada = diagonales.FirstOrDefault();
+                        }
+                        break;
+                }
+
+                // Configurar la punta de flecha encontrada
+                if (flechaSeleccionada != null)
+                {
+                    Parameter leaderArrowParam = estiloTexto.get_Parameter(BuiltInParameter.LEADER_ARROWHEAD);
+                    if (leaderArrowParam != null && !leaderArrowParam.IsReadOnly)
+                    {
+                        leaderArrowParam.Set(flechaSeleccionada.Id);
+                        Debug.WriteLine($"Punta de flecha '{tipoFlecha}' configurada: {flechaSeleccionada.Name}");
+                    }
+                }
+                else
+                {
+                    Debug.WriteLine($"No se encontr√≥ punta de flecha para tipo '{tipoFlecha}'");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error configurando punta de flecha tipo '{tipoFlecha}': {ex.Message}");
+            }
+        }
+
+        #endregion
+
+        #endregion
+
+        #region BOTON DE MATERIALES
 
 
         #endregion
@@ -755,7 +1084,7 @@ namespace Forta.Estructuras.Commands
 
                     
 
-                    // Verificar quÈ tipos est·n en uso
+                    // Verificar qu√© tipos est√°n en uso
                     var tiposEnUso = VerificarTiposSuelosEnUso(doc);
                     
 
@@ -779,7 +1108,7 @@ namespace Forta.Estructuras.Commands
                         
                     }
 
-                    // Eliminar tipos que no est·n en uso y no son los que queremos crear
+                    // Eliminar tipos que no est√°n en uso y no son los que queremos crear
                     var tiposParaEliminar = new List<ElementId>();
 
                     foreach (var tipoSuelo in tiposSuelosExistentes)
@@ -793,7 +1122,7 @@ namespace Forta.Estructuras.Commands
                         }
                         else if (!esDeseado && estaEnUso)
                         {
-                            TaskDialog.Show("InformaciÛn", $"No se pudo eliminar el suelo '{tipoSuelo.Name}' porque existe en el modelo.");
+                            TaskDialog.Show("Informaci√≥n", $"No se pudo eliminar el suelo '{tipoSuelo.Name}' porque existe en el modelo.");
                         }
                     }
 
@@ -816,7 +1145,7 @@ namespace Forta.Estructuras.Commands
                 catch (Exception ex)
                 {
                     trans.RollBack();
-                    throw new Exception("Error durante la inicializaciÛn de familias: " + ex.Message);
+                    throw new Exception("Error durante la inicializaci√≥n de familias: " + ex.Message);
                 }
             }
         }
@@ -851,7 +1180,7 @@ namespace Forta.Estructuras.Commands
 
                 if (tipoPlantilla == null)
                 {
-                    throw new InvalidOperationException("No se encontrÛ ning˙n tipo de suelo como plantilla.");
+                    throw new InvalidOperationException("No se encontr√≥ ning√∫n tipo de suelo como plantilla.");
                 }
 
                 // Duplicar el tipo de suelo

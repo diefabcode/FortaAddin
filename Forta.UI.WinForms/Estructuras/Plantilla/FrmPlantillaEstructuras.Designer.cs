@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.pnl_PlantillaEstructura = new System.Windows.Forms.Panel();
+            this.btn_textosCotas = new System.Windows.Forms.Button();
             this.btn_iniciaFamilias = new System.Windows.Forms.Button();
             this.btn_estilosLinea = new System.Windows.Forms.Button();
             this.btn_adquirirPropiedades = new System.Windows.Forms.Button();
@@ -56,12 +57,24 @@
             this.pnl_PlantillaEstructura.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pnl_PLantillaEstructuras_MouseMove);
             this.pnl_PlantillaEstructura.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pnl_PlantillaEstructura_MouseUp);
             // 
+            // btn_textosCotas
+            // 
+            this.btn_textosCotas.BackColor = System.Drawing.SystemColors.InactiveBorder;
+            this.btn_textosCotas.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btn_textosCotas.Image = global::Forta.UI.WinForms.Properties.Resources.EstilosTextoCotas185x85;
+            this.btn_textosCotas.Location = new System.Drawing.Point(305, 217);
+            this.btn_textosCotas.Name = "btn_textosCotas";
+            this.btn_textosCotas.Size = new System.Drawing.Size(185, 85);
+            this.btn_textosCotas.TabIndex = 9;
+            this.btn_textosCotas.UseVisualStyleBackColor = false;
+            this.btn_textosCotas.Click += new System.EventHandler(this.btn_textosCotas_Click);
+            // 
             // btn_iniciaFamilias
             // 
             this.btn_iniciaFamilias.BackColor = System.Drawing.SystemColors.InactiveBorder;
             this.btn_iniciaFamilias.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btn_iniciaFamilias.Image = global::Forta.UI.WinForms.Properties.Resources.InicializaFamilias185x85;
-            this.btn_iniciaFamilias.Location = new System.Drawing.Point(43, 305);
+            this.btn_iniciaFamilias.Location = new System.Drawing.Point(43, 335);
             this.btn_iniciaFamilias.Name = "btn_iniciaFamilias";
             this.btn_iniciaFamilias.Size = new System.Drawing.Size(185, 85);
             this.btn_iniciaFamilias.TabIndex = 8;
@@ -73,7 +86,7 @@
             this.btn_estilosLinea.BackColor = System.Drawing.SystemColors.InactiveBorder;
             this.btn_estilosLinea.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btn_estilosLinea.Image = global::Forta.UI.WinForms.Properties.Resources.EstilosLinea185x851;
-            this.btn_estilosLinea.Location = new System.Drawing.Point(43, 187);
+            this.btn_estilosLinea.Location = new System.Drawing.Point(43, 217);
             this.btn_estilosLinea.Name = "btn_estilosLinea";
             this.btn_estilosLinea.Size = new System.Drawing.Size(185, 85);
             this.btn_estilosLinea.TabIndex = 7;
@@ -133,6 +146,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ButtonFace;
             this.ClientSize = new System.Drawing.Size(822, 577);
+            this.Controls.Add(this.btn_textosCotas);
             this.Controls.Add(this.btn_iniciaFamilias);
             this.Controls.Add(this.btn_estilosLinea);
             this.Controls.Add(this.btn_adquirirPropiedades);
@@ -140,7 +154,6 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "FrmPlantillaEstructuras";
             this.Text = "FrmPlantillaEstructuras";
-            this.Load += new System.EventHandler(this.FrmPlantillaEstructuras_Load);
             this.pnl_PlantillaEstructura.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pbx_minimizar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbx_maximizar)).EndInit();
@@ -158,5 +171,6 @@
         private System.Windows.Forms.Button btn_adquirirPropiedades;
         private System.Windows.Forms.Button btn_estilosLinea;
         private System.Windows.Forms.Button btn_iniciaFamilias;
+        private System.Windows.Forms.Button btn_textosCotas;
     }
 }

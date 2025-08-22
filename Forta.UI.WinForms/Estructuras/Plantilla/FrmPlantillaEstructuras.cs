@@ -80,14 +80,6 @@ namespace Forta.UI.WinForms
 
         #endregion
 
-
-        private void FrmPlantillaEstructuras_Load(object sender, EventArgs e)
-        {
-
-        }
-
-
-
         #region EVENTO DE BOTON DE ESTILOS DE LINEA
         private void btn_estilosLinea_Click_1(object sender, EventArgs e)
         {
@@ -106,6 +98,7 @@ namespace Forta.UI.WinForms
         }
         #endregion
 
+        #region EVENTO DE BOTON INICIALIZA FAMILIAS
         private void btn_iniciaFamilias_Click(object sender, EventArgs e)
         {
             DialogResult resultado = MessageBox.Show(
@@ -122,6 +115,28 @@ namespace Forta.UI.WinForms
                 this.Close();
             }
         }
+
+
+
+        #endregion
+
+        #region EVENTO DE BOTON ESTILOS DE COTA Y TEXTO
+        private void btn_textosCotas_Click(object sender, EventArgs e)
+        {
+            DialogResult resultado = MessageBox.Show(
+                "Se crearán nuevos estilod de texto y cotas", "Estilos de Texto y Cotas",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if ( resultado == DialogResult.Yes)
+            {
+                this.DialogResult = DialogResult.OK;
+                this.Tag = "EstilosTextoCotas";
+                this.Close();
+            }
+
+        }
+        #endregion
     }
 }
 
