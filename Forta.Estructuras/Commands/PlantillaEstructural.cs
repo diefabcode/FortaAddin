@@ -751,6 +751,7 @@ namespace Forta.Estructuras.Commands
             }
         }
 
+        //ME GUSTARÍA QUE AL FINALIZAR EL CODIGO SALIERA "SE HAN CREADO LOS TEXTOS Y COTAS CORRECTAMENTE"
         #region CREAR TEXTOS
 
         /// <summary>
