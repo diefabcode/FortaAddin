@@ -29,13 +29,13 @@
         private void InitializeComponent()
         {
             this.pnl_PlantillaEstructura = new System.Windows.Forms.Panel();
+            this.pbx_minimizar = new System.Windows.Forms.PictureBox();
+            this.pbx_maximizar = new System.Windows.Forms.PictureBox();
+            this.pbx_cerrar = new System.Windows.Forms.PictureBox();
             this.btn_textosCotas = new System.Windows.Forms.Button();
             this.btn_iniciaFamilias = new System.Windows.Forms.Button();
             this.btn_estilosLinea = new System.Windows.Forms.Button();
             this.btn_adquirirPropiedades = new System.Windows.Forms.Button();
-            this.pbx_minimizar = new System.Windows.Forms.PictureBox();
-            this.pbx_maximizar = new System.Windows.Forms.PictureBox();
-            this.pbx_cerrar = new System.Windows.Forms.PictureBox();
             this.pnl_PlantillaEstructura.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbx_minimizar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbx_maximizar)).BeginInit();
@@ -56,6 +56,42 @@
             this.pnl_PlantillaEstructura.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pnl_PlantillaEstructura_MouseDown);
             this.pnl_PlantillaEstructura.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pnl_PLantillaEstructuras_MouseMove);
             this.pnl_PlantillaEstructura.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pnl_PlantillaEstructura_MouseUp);
+            // 
+            // pbx_minimizar
+            // 
+            this.pbx_minimizar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pbx_minimizar.Image = global::Forta.UI.WinForms.Properties.Resources.Minimizar60x60;
+            this.pbx_minimizar.Location = new System.Drawing.Point(630, 7);
+            this.pbx_minimizar.Name = "pbx_minimizar";
+            this.pbx_minimizar.Size = new System.Drawing.Size(61, 64);
+            this.pbx_minimizar.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pbx_minimizar.TabIndex = 2;
+            this.pbx_minimizar.TabStop = false;
+            this.pbx_minimizar.Click += new System.EventHandler(this.pbx_minimizar_Click);
+            // 
+            // pbx_maximizar
+            // 
+            this.pbx_maximizar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pbx_maximizar.Image = global::Forta.UI.WinForms.Properties.Resources.Maximizar60x60;
+            this.pbx_maximizar.Location = new System.Drawing.Point(697, 7);
+            this.pbx_maximizar.Name = "pbx_maximizar";
+            this.pbx_maximizar.Size = new System.Drawing.Size(61, 64);
+            this.pbx_maximizar.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pbx_maximizar.TabIndex = 1;
+            this.pbx_maximizar.TabStop = false;
+            this.pbx_maximizar.Click += new System.EventHandler(this.pbx_maximizar_Click);
+            // 
+            // pbx_cerrar
+            // 
+            this.pbx_cerrar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pbx_cerrar.Image = global::Forta.UI.WinForms.Properties.Resources.Cerrar60x60;
+            this.pbx_cerrar.Location = new System.Drawing.Point(764, 7);
+            this.pbx_cerrar.Name = "pbx_cerrar";
+            this.pbx_cerrar.Size = new System.Drawing.Size(55, 64);
+            this.pbx_cerrar.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pbx_cerrar.TabIndex = 1;
+            this.pbx_cerrar.TabStop = false;
+            this.pbx_cerrar.Click += new System.EventHandler(this.pbx_cerrar_Click);
             // 
             // btn_textosCotas
             // 
@@ -103,42 +139,6 @@
             this.btn_adquirirPropiedades.Size = new System.Drawing.Size(185, 85);
             this.btn_adquirirPropiedades.TabIndex = 6;
             this.btn_adquirirPropiedades.UseVisualStyleBackColor = false;
-            // 
-            // pbx_minimizar
-            // 
-            this.pbx_minimizar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbx_minimizar.Image = global::Forta.UI.WinForms.Properties.Resources.Minimizar60x60;
-            this.pbx_minimizar.Location = new System.Drawing.Point(630, 7);
-            this.pbx_minimizar.Name = "pbx_minimizar";
-            this.pbx_minimizar.Size = new System.Drawing.Size(61, 64);
-            this.pbx_minimizar.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pbx_minimizar.TabIndex = 2;
-            this.pbx_minimizar.TabStop = false;
-            this.pbx_minimizar.Click += new System.EventHandler(this.pbx_minimizar_Click);
-            // 
-            // pbx_maximizar
-            // 
-            this.pbx_maximizar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbx_maximizar.Image = global::Forta.UI.WinForms.Properties.Resources.Maximizar60x60;
-            this.pbx_maximizar.Location = new System.Drawing.Point(697, 7);
-            this.pbx_maximizar.Name = "pbx_maximizar";
-            this.pbx_maximizar.Size = new System.Drawing.Size(61, 64);
-            this.pbx_maximizar.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pbx_maximizar.TabIndex = 1;
-            this.pbx_maximizar.TabStop = false;
-            this.pbx_maximizar.Click += new System.EventHandler(this.pbx_maximizar_Click);
-            // 
-            // pbx_cerrar
-            // 
-            this.pbx_cerrar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbx_cerrar.Image = global::Forta.UI.WinForms.Properties.Resources.Cerrar60x60;
-            this.pbx_cerrar.Location = new System.Drawing.Point(764, 7);
-            this.pbx_cerrar.Name = "pbx_cerrar";
-            this.pbx_cerrar.Size = new System.Drawing.Size(55, 64);
-            this.pbx_cerrar.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pbx_cerrar.TabIndex = 1;
-            this.pbx_cerrar.TabStop = false;
-            this.pbx_cerrar.Click += new System.EventHandler(this.pbx_cerrar_Click);
             // 
             // FrmPlantillaEstructuras
             // 

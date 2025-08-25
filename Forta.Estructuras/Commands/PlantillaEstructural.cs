@@ -11,6 +11,10 @@ using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
+using Forta.Core.Plantillas.Generales.Lineas.EliminarAnteriores;
+using Forta.Core.Plantillas.Generales.Lineas.LinePatterns;
+using Forta.Core.Plantillas.Generales.Lineas.LineStyles;
+using Forta.Core.Plantillas.Generales.Lineas.ObjectStyles;
 using Forta.UI.WinForms;
 
 #endregion
@@ -63,36 +67,51 @@ namespace Forta.Estructuras.Commands
 
         #region BOTON DE ESTILOS DE LINEA
 
-        #region AQUI SE EJECUTA TODO EL CODIGO REFERENTE A LINEAS
         private void AplicarEstilosLinea(Document doc)
         {
             using (Transaction trans = new Transaction(doc, "Aplicar Estilos de Línea"))
             {
                 trans.Start();
-
                 try
                 {
-                    // 1. Eliminar todos los Line Patterns existentes (excepto los built-in)
-                    EliminarLinePatterns(doc);
+                    // 1) Patrones: limpiar y crear según perfiles de Estructuras
+                    LinePatternsCleanup.DeleteCustom(doc);
+                    foreach (var (name, segs) in EstructurasLinePatternProfiles.All())
+                        LinePatternsService.CreateOrUpdate(doc, name, segs);
 
-                    // 2. Crear los nuevos Line Patterns
-                    CrearLinePatternDiscontinua(doc);
-                    CrearLinePatternEje(doc);
-                    CrearLinePatternPunto(doc);
-                    CrearLineadeLLamada(doc);
-                    CrearLineaPatternCajaReferencia(doc);
-                    CrearLineaPatternPlanosReferencia(doc);
-                    CrearLineaPatternOculta(doc);
-                    CrearLineaPatternProyeccion(doc);
-                    CrearLineaPatternCorte(doc);
+                    // 2) Object Styles (pesos por categoría)
+                    ObjectStylesService.SetModelWeights(doc, proj: 1, cut: 2);
+                    ObjectStylesService.SetAnnotationWeights(doc, proj: 1);
 
-                    // 3. Asignar grosores de líneas
-                    ConfigurarObjectStyles(doc);
-                    ConfigurarObjectStylesAnotacion(doc);
+                    // 3) Object Styles (patrón por categoría de anotación)
+                    ObjectStylesService.SetAnnotationPatterns(doc, new Dictionary<string, string>
+            {
+                { "Callout Boundary", "Linea de Llamada" }, { "Contorno de llamada", "Linea de Llamada" },
+                { "Displacement Path", "Linea Punto" },     { "Camino de desplazamiento", "Linea Punto" },
+                { "Plan Region", "Solid" },                 { "Región de plano", "Solid" },
+                { "Reference Planes", "Linea de Planos de Referencia" }, { "Planos de referencia", "Linea de Planos de Referencia" },
+                { "Scope Boxes", "Linea de Cajas de Referencia" },       { "Cajas de referencia", "Linea de Cajas de Referencia" },
+                { "Section Line", "Linea de Corte" },       { "Línea de sección", "Linea de Corte" }
+            });
 
-                    // 4. Configurar estilos de linea
-                    // 4. Configurar Line Styles
-                    ConfigurarLineStyles(doc);
+                    // 4) Line Styles: borrar existentes, crear y configurar los tuyos
+                    LineStylesService.RemoveCustom(doc);
+                    LineStylesService.Ensure(doc, new[]
+                    {
+                "#1 Discontinua", "#1 Solida", "#1 Solida Roja",
+                "#2 Discontinua", "#2 Solida", "#2 Solida Roja",
+                "#3 Discontinua", "#3 Solida", "#3 Solida Roja"
+            });
+
+                    LineStylesService.SetProps(doc, "#1 Discontinua", 1, new Color(0, 0, 0), "Linea Discontinua");
+                    LineStylesService.SetProps(doc, "#1 Solida", 1, new Color(0, 0, 0), "Solid");
+                    LineStylesService.SetProps(doc, "#1 Solida Roja", 1, new Color(255, 0, 0), "Solid");
+                    LineStylesService.SetProps(doc, "#2 Discontinua", 2, new Color(0, 0, 0), "Linea Discontinua");
+                    LineStylesService.SetProps(doc, "#2 Solida", 2, new Color(0, 0, 0), "Solid");
+                    LineStylesService.SetProps(doc, "#2 Solida Roja", 2, new Color(255, 0, 0), "Solid");
+                    LineStylesService.SetProps(doc, "#3 Discontinua", 3, new Color(0, 0, 0), "Linea Discontinua");
+                    LineStylesService.SetProps(doc, "#3 Solida", 3, new Color(0, 0, 0), "Solid");
+                    LineStylesService.SetProps(doc, "#3 Solida Roja", 3, new Color(255, 0, 0), "Solid");
 
                     trans.Commit();
                 }
@@ -103,162 +122,6 @@ namespace Forta.Estructuras.Commands
                 }
             }
         }
-
-        #endregion
-
-        #region TODO REFERENTE A LINE PATTERNS(PATRONES DE LINEA)
-
-        #region AQUI SE ELIMINAN LOS ESTILOS DE LINEA EXISTENTES
-        private void EliminarLinePatterns(Document doc)
-        {
-            FilteredElementCollector collector = new FilteredElementCollector(doc)
-                .OfClass(typeof(LinePatternElement));
-
-            List<ElementId> idsToDelete = new List<ElementId>();
-
-            foreach (LinePatternElement pattern in collector)
-            {
-                // Solo eliminar patterns personalizados, no los built-in
-                if (pattern.Name != "Solid" && pattern.Name != "<Invisible lines>")
-                {
-                    idsToDelete.Add(pattern.Id);
-                }
-            }
-
-            if (idsToDelete.Count > 0)
-            {
-                doc.Delete(idsToDelete);
-            }
-        }
-
-        #endregion
-
-        #region AQUI SE CREAN LOS ESTILOS DE LINEA
-        private void CrearLinePatternDiscontinua(Document doc)
-        {
-            LinePattern linePattern = new LinePattern("Linea Discontinua");
-            linePattern.SetSegments(new List<LinePatternSegment>
-    {
-        new LinePatternSegment(LinePatternSegmentType.Dash, 3.175 / 304.8), // 3.175mm convertido a pies
-        new LinePatternSegment(LinePatternSegmentType.Space, 3.175 / 304.8)  // 3.175mm convertido a pies
-    });
-
-            LinePatternElement.Create(doc, linePattern);
-        }
-
-        private void CrearLinePatternEje(Document doc)
-        {
-            LinePattern linePattern = new LinePattern("Línea de eje");
-            linePattern.SetSegments(new List<LinePatternSegment>
-    {
-        new LinePatternSegment(LinePatternSegmentType.Dash, 12.7 / 304.8),   // 12.7mm
-        new LinePatternSegment(LinePatternSegmentType.Space, 3.175 / 304.8), // 3.175mm
-        new LinePatternSegment(LinePatternSegmentType.Dash, 3.175 / 304.8),  // 3.175mm
-        new LinePatternSegment(LinePatternSegmentType.Space, 3.175 / 304.8)  // 3.175mm
-    });
-
-            LinePatternElement.Create(doc, linePattern);
-        }
-
-        private void CrearLinePatternPunto(Document doc)
-        {
-            LinePattern linePattern = new LinePattern("Linea Punto");
-            linePattern.SetSegments(new List<LinePatternSegment>
-    {
-        new LinePatternSegment(LinePatternSegmentType.Dash, 4.7625 / 304.8), // 4.7625mm
-        new LinePatternSegment(LinePatternSegmentType.Space, 2.3813 / 304.8) // 2.3813mm
-    });
-
-            LinePatternElement.Create(doc, linePattern);
-        }
-
-        private void CrearLineadeLLamada(Document doc)
-        {
-            LinePattern linePattern = new LinePattern("Linea de Llamada");
-            linePattern.SetSegments(new List<LinePatternSegment>
-    {
-        new LinePatternSegment(LinePatternSegmentType.Dash, 15 / 304.8), // 15mm
-        new LinePatternSegment(LinePatternSegmentType.Space, 2.5 / 304.8), // 2.5mm
-        new LinePatternSegment(LinePatternSegmentType.Dash, 5/304.8), // 5
-        new LinePatternSegment(LinePatternSegmentType.Space, 2.5 / 304.8), // 2.5mm
-        new LinePatternSegment(LinePatternSegmentType.Dash, 5/304.8), // 5
-        new LinePatternSegment(LinePatternSegmentType.Space, 2.5 / 304.8) // 2.5mm
-
-    });
-
-            LinePatternElement.Create(doc, linePattern);
-        }
-
-        private void CrearLineaPatternCajaReferencia(Document doc)
-        {
-            LinePattern linePattern = new LinePattern("Linea de Cajas de Referencia");
-            linePattern.SetSegments(new List<LinePatternSegment>
-    {
-        new LinePatternSegment(LinePatternSegmentType.Dash, 3 / 304.8), // 3mm
-        new LinePatternSegment(LinePatternSegmentType.Space, 3 / 304.8), // 3mm       
-
-    });
-
-            LinePatternElement.Create(doc, linePattern);
-        }
-
-        private void CrearLineaPatternPlanosReferencia(Document doc)
-        {
-            LinePattern linePattern = new LinePattern("Linea de Planos de Referencia");
-            linePattern.SetSegments(new List<LinePatternSegment>
-    {
-        new LinePatternSegment(LinePatternSegmentType.Dash, 3 / 304.8), // 3mm
-        new LinePatternSegment(LinePatternSegmentType.Space, 3 / 304.8), // 3mm       
-
-    });
-
-            LinePatternElement.Create(doc, linePattern);
-        }
-
-        private void CrearLineaPatternOculta(Document doc)
-        {
-            LinePattern linePattern = new LinePattern("Linea Oculta");
-            linePattern.SetSegments(new List<LinePatternSegment>
-    {
-        new LinePatternSegment(LinePatternSegmentType.Dash, 4.7625 / 304.8), // 4.7625mm
-        new LinePatternSegment(LinePatternSegmentType.Space, 2.3813 / 304.8), // 2.3813mm       
-
-    });
-
-            LinePatternElement.Create(doc, linePattern);
-        }
-
-        private void CrearLineaPatternProyeccion(Document doc)
-        {
-            LinePattern linePattern = new LinePattern("Linea de Proyección");
-            linePattern.SetSegments(new List<LinePatternSegment>
-    {
-        new LinePatternSegment(LinePatternSegmentType.Dash, 2 / 304.8), // 2mm
-        new LinePatternSegment(LinePatternSegmentType.Space, 2 / 304.8), // 2mm       
-
-    });
-
-            LinePatternElement.Create(doc, linePattern);
-        }
-
-        private void CrearLineaPatternCorte(Document doc)
-        {
-            LinePattern linePattern = new LinePattern("Linea de Corte");
-            linePattern.SetSegments(new List<LinePatternSegment>
-    {
-        new LinePatternSegment(LinePatternSegmentType.Dash, 6.35 / 304.8), // 6.35mm
-        new LinePatternSegment(LinePatternSegmentType.Space, 4.7625 / 304.8), // 4.7625mm
-        new LinePatternSegment(LinePatternSegmentType.Dot, 0), // 
-        new LinePatternSegment(LinePatternSegmentType.Space, 4.7625 / 304.8), // 4.7625mm
-
-    });
-
-            LinePatternElement.Create(doc, linePattern);
-        }
-
-        #endregion
-
-        #endregion
 
         #region TODO LO REFERENTE A OBJECT STYLES (ESTILOS DE OBJETO)
 
