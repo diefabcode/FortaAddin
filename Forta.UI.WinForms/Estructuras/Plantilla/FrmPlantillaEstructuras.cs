@@ -8,7 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Reflection;
-using Forta.Core.Utils; // Usar Utils, no Utilidades
+using Forta.Core.Utils;
+using Autodesk.Revit.UI; // Usar Utils, no Utilidades
 
 namespace Forta.UI.WinForms
 {
@@ -80,7 +81,6 @@ namespace Forta.UI.WinForms
 
         #endregion
 
-        #region EVENTO DE BOTON DE ESTILOS DE LINEA
         private void btn_estilosLinea_Click_1(object sender, EventArgs e)
         {
             DialogResult resultado = MessageBox.Show(
@@ -96,47 +96,46 @@ namespace Forta.UI.WinForms
                 this.Close();
             }
         }
-        #endregion
-
-        #region EVENTO DE BOTON INICIALIZA FAMILIAS
+  
         private void btn_iniciaFamilias_Click(object sender, EventArgs e)
         {
-            DialogResult resultado = MessageBox.Show(
-        "¿Estás seguro de que quieres inicializar tus familias?\n\n" +
-        "Las familias que no estén en uso (modeladas) serán eliminadas.",
-        "Inicializar Familias",
-        MessageBoxButtons.OKCancel,
-        MessageBoxIcon.Question);
-
-            if (resultado == DialogResult.OK)
-            {
-                this.DialogResult = DialogResult.OK;
-                this.Tag = "InicializarFamilias";
-                this.Close();
-            }
-        }
-
-
-
-        #endregion
-
-        #region EVENTO DE BOTON ESTILOS DE COTA Y TEXTO
-        private void btn_textosCotas_Click(object sender, EventArgs e)
+            TaskDialog.Show("FORTA", "FUNCIONALIDAD EN PROCESO");
+        }  
+   
+        private void btn_textos_Click(object sender, EventArgs e)
         {
             DialogResult resultado = MessageBox.Show(
-                "Se crearán nuevos estilod de texto y cotas", "Estilos de Texto y Cotas",
+                "Se crearán nuevos estilos de texto", "Estilos de Texto",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Question);
 
-            if ( resultado == DialogResult.Yes)
+            if (resultado == DialogResult.Yes)
             {
                 this.DialogResult = DialogResult.OK;
-                this.Tag = "EstilosTextoCotas";
+                this.Tag = "EstilosTexto";
                 this.Close();
             }
-
         }
-        #endregion
+
+        private void btn_materiales_Click(object sender, EventArgs e)
+        {
+            TaskDialog.Show("FORTA", "FUNCIONALIDAD EN PROCESO");
+        }
+
+        private void btn_subproyectos_Click(object sender, EventArgs e)
+        {
+            TaskDialog.Show("FORTA", "FUNCIONALIDAD EN PROCESO");
+        }
+
+        private void btn_parametros_Click(object sender, EventArgs e)
+        {
+            TaskDialog.Show("FORTA", "FUNCIONALIDAD EN PROCESO");
+        }
+
+        private void btn_cotas_Click(object sender, EventArgs e)
+        {
+            TaskDialog.Show("FORTA", "FUNCIONALIDAD EN PROCESO");
+        }
     }
 }
 

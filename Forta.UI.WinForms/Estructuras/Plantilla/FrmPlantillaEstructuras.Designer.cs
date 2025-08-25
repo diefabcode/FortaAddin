@@ -29,13 +29,17 @@
         private void InitializeComponent()
         {
             this.pnl_PlantillaEstructura = new System.Windows.Forms.Panel();
-            this.pbx_minimizar = new System.Windows.Forms.PictureBox();
-            this.pbx_maximizar = new System.Windows.Forms.PictureBox();
-            this.pbx_cerrar = new System.Windows.Forms.PictureBox();
-            this.btn_textosCotas = new System.Windows.Forms.Button();
+            this.btn_parametros = new System.Windows.Forms.Button();
+            this.btn_subproyectos = new System.Windows.Forms.Button();
+            this.btn_materiales = new System.Windows.Forms.Button();
+            this.btn_cotas = new System.Windows.Forms.Button();
+            this.btn_textos = new System.Windows.Forms.Button();
             this.btn_iniciaFamilias = new System.Windows.Forms.Button();
             this.btn_estilosLinea = new System.Windows.Forms.Button();
             this.btn_adquirirPropiedades = new System.Windows.Forms.Button();
+            this.pbx_minimizar = new System.Windows.Forms.PictureBox();
+            this.pbx_maximizar = new System.Windows.Forms.PictureBox();
+            this.pbx_cerrar = new System.Windows.Forms.PictureBox();
             this.pnl_PlantillaEstructura.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbx_minimizar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbx_maximizar)).BeginInit();
@@ -56,6 +60,101 @@
             this.pnl_PlantillaEstructura.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pnl_PlantillaEstructura_MouseDown);
             this.pnl_PlantillaEstructura.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pnl_PLantillaEstructuras_MouseMove);
             this.pnl_PlantillaEstructura.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pnl_PlantillaEstructura_MouseUp);
+            // 
+            // btn_parametros
+            // 
+            this.btn_parametros.BackColor = System.Drawing.SystemColors.InactiveBorder;
+            this.btn_parametros.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btn_parametros.Image = global::Forta.UI.WinForms.Properties.Resources.Parametros185x85;
+            this.btn_parametros.Location = new System.Drawing.Point(43, 454);
+            this.btn_parametros.Name = "btn_parametros";
+            this.btn_parametros.Size = new System.Drawing.Size(185, 85);
+            this.btn_parametros.TabIndex = 14;
+            this.btn_parametros.UseVisualStyleBackColor = false;
+            this.btn_parametros.Click += new System.EventHandler(this.btn_parametros_Click);
+            // 
+            // btn_subproyectos
+            // 
+            this.btn_subproyectos.BackColor = System.Drawing.SystemColors.InactiveBorder;
+            this.btn_subproyectos.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btn_subproyectos.Image = global::Forta.UI.WinForms.Properties.Resources.Subproyectos185x85;
+            this.btn_subproyectos.Location = new System.Drawing.Point(573, 335);
+            this.btn_subproyectos.Name = "btn_subproyectos";
+            this.btn_subproyectos.Size = new System.Drawing.Size(185, 85);
+            this.btn_subproyectos.TabIndex = 13;
+            this.btn_subproyectos.UseVisualStyleBackColor = false;
+            this.btn_subproyectos.Click += new System.EventHandler(this.btn_subproyectos_Click);
+            // 
+            // btn_materiales
+            // 
+            this.btn_materiales.BackColor = System.Drawing.SystemColors.InactiveBorder;
+            this.btn_materiales.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btn_materiales.Image = global::Forta.UI.WinForms.Properties.Resources.Materiales185x85;
+            this.btn_materiales.Location = new System.Drawing.Point(305, 335);
+            this.btn_materiales.Name = "btn_materiales";
+            this.btn_materiales.Size = new System.Drawing.Size(185, 85);
+            this.btn_materiales.TabIndex = 12;
+            this.btn_materiales.UseVisualStyleBackColor = false;
+            this.btn_materiales.Click += new System.EventHandler(this.btn_materiales_Click);
+            // 
+            // btn_cotas
+            // 
+            this.btn_cotas.BackColor = System.Drawing.SystemColors.InactiveBorder;
+            this.btn_cotas.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btn_cotas.Image = global::Forta.UI.WinForms.Properties.Resources.EstilosCotas185x55;
+            this.btn_cotas.Location = new System.Drawing.Point(573, 217);
+            this.btn_cotas.Name = "btn_cotas";
+            this.btn_cotas.Size = new System.Drawing.Size(185, 85);
+            this.btn_cotas.TabIndex = 11;
+            this.btn_cotas.UseVisualStyleBackColor = false;
+            this.btn_cotas.Click += new System.EventHandler(this.btn_cotas_Click);
+            // 
+            // btn_textos
+            // 
+            this.btn_textos.BackColor = System.Drawing.SystemColors.InactiveBorder;
+            this.btn_textos.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btn_textos.Image = global::Forta.UI.WinForms.Properties.Resources.EstilosTextos185x85;
+            this.btn_textos.Location = new System.Drawing.Point(305, 217);
+            this.btn_textos.Name = "btn_textos";
+            this.btn_textos.Size = new System.Drawing.Size(185, 85);
+            this.btn_textos.TabIndex = 10;
+            this.btn_textos.UseVisualStyleBackColor = false;
+            this.btn_textos.Click += new System.EventHandler(this.btn_textos_Click);
+            // 
+            // btn_iniciaFamilias
+            // 
+            this.btn_iniciaFamilias.BackColor = System.Drawing.SystemColors.InactiveBorder;
+            this.btn_iniciaFamilias.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btn_iniciaFamilias.Image = global::Forta.UI.WinForms.Properties.Resources.InicializaFamilias185x85;
+            this.btn_iniciaFamilias.Location = new System.Drawing.Point(43, 335);
+            this.btn_iniciaFamilias.Name = "btn_iniciaFamilias";
+            this.btn_iniciaFamilias.Size = new System.Drawing.Size(185, 85);
+            this.btn_iniciaFamilias.TabIndex = 8;
+            this.btn_iniciaFamilias.UseVisualStyleBackColor = false;
+            this.btn_iniciaFamilias.Click += new System.EventHandler(this.btn_iniciaFamilias_Click);
+            // 
+            // btn_estilosLinea
+            // 
+            this.btn_estilosLinea.BackColor = System.Drawing.SystemColors.InactiveBorder;
+            this.btn_estilosLinea.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btn_estilosLinea.Image = global::Forta.UI.WinForms.Properties.Resources.EstilosLinea185x851;
+            this.btn_estilosLinea.Location = new System.Drawing.Point(43, 217);
+            this.btn_estilosLinea.Name = "btn_estilosLinea";
+            this.btn_estilosLinea.Size = new System.Drawing.Size(185, 85);
+            this.btn_estilosLinea.TabIndex = 7;
+            this.btn_estilosLinea.UseVisualStyleBackColor = false;
+            this.btn_estilosLinea.Click += new System.EventHandler(this.btn_estilosLinea_Click_1);
+            // 
+            // btn_adquirirPropiedades
+            // 
+            this.btn_adquirirPropiedades.BackColor = System.Drawing.SystemColors.InactiveBorder;
+            this.btn_adquirirPropiedades.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btn_adquirirPropiedades.Image = global::Forta.UI.WinForms.Properties.Resources.AdquirirPropiedades185x85;
+            this.btn_adquirirPropiedades.Location = new System.Drawing.Point(305, 95);
+            this.btn_adquirirPropiedades.Name = "btn_adquirirPropiedades";
+            this.btn_adquirirPropiedades.Size = new System.Drawing.Size(185, 85);
+            this.btn_adquirirPropiedades.TabIndex = 6;
+            this.btn_adquirirPropiedades.UseVisualStyleBackColor = false;
             // 
             // pbx_minimizar
             // 
@@ -93,60 +192,17 @@
             this.pbx_cerrar.TabStop = false;
             this.pbx_cerrar.Click += new System.EventHandler(this.pbx_cerrar_Click);
             // 
-            // btn_textosCotas
-            // 
-            this.btn_textosCotas.BackColor = System.Drawing.SystemColors.InactiveBorder;
-            this.btn_textosCotas.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btn_textosCotas.Image = global::Forta.UI.WinForms.Properties.Resources.EstilosTextoCotas185x85;
-            this.btn_textosCotas.Location = new System.Drawing.Point(305, 217);
-            this.btn_textosCotas.Name = "btn_textosCotas";
-            this.btn_textosCotas.Size = new System.Drawing.Size(185, 85);
-            this.btn_textosCotas.TabIndex = 9;
-            this.btn_textosCotas.UseVisualStyleBackColor = false;
-            this.btn_textosCotas.Click += new System.EventHandler(this.btn_textosCotas_Click);
-            // 
-            // btn_iniciaFamilias
-            // 
-            this.btn_iniciaFamilias.BackColor = System.Drawing.SystemColors.InactiveBorder;
-            this.btn_iniciaFamilias.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btn_iniciaFamilias.Image = global::Forta.UI.WinForms.Properties.Resources.InicializaFamilias185x85;
-            this.btn_iniciaFamilias.Location = new System.Drawing.Point(43, 335);
-            this.btn_iniciaFamilias.Name = "btn_iniciaFamilias";
-            this.btn_iniciaFamilias.Size = new System.Drawing.Size(185, 85);
-            this.btn_iniciaFamilias.TabIndex = 8;
-            this.btn_iniciaFamilias.UseVisualStyleBackColor = false;
-            this.btn_iniciaFamilias.Click += new System.EventHandler(this.btn_iniciaFamilias_Click);
-            // 
-            // btn_estilosLinea
-            // 
-            this.btn_estilosLinea.BackColor = System.Drawing.SystemColors.InactiveBorder;
-            this.btn_estilosLinea.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btn_estilosLinea.Image = global::Forta.UI.WinForms.Properties.Resources.EstilosLinea185x851;
-            this.btn_estilosLinea.Location = new System.Drawing.Point(43, 217);
-            this.btn_estilosLinea.Name = "btn_estilosLinea";
-            this.btn_estilosLinea.Size = new System.Drawing.Size(185, 85);
-            this.btn_estilosLinea.TabIndex = 7;
-            this.btn_estilosLinea.UseVisualStyleBackColor = false;
-            this.btn_estilosLinea.Click += new System.EventHandler(this.btn_estilosLinea_Click_1);
-            // 
-            // btn_adquirirPropiedades
-            // 
-            this.btn_adquirirPropiedades.BackColor = System.Drawing.SystemColors.InactiveBorder;
-            this.btn_adquirirPropiedades.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btn_adquirirPropiedades.Image = global::Forta.UI.WinForms.Properties.Resources.AdquirirPropiedades185x85;
-            this.btn_adquirirPropiedades.Location = new System.Drawing.Point(305, 95);
-            this.btn_adquirirPropiedades.Name = "btn_adquirirPropiedades";
-            this.btn_adquirirPropiedades.Size = new System.Drawing.Size(185, 85);
-            this.btn_adquirirPropiedades.TabIndex = 6;
-            this.btn_adquirirPropiedades.UseVisualStyleBackColor = false;
-            // 
             // FrmPlantillaEstructuras
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ButtonFace;
             this.ClientSize = new System.Drawing.Size(822, 577);
-            this.Controls.Add(this.btn_textosCotas);
+            this.Controls.Add(this.btn_parametros);
+            this.Controls.Add(this.btn_subproyectos);
+            this.Controls.Add(this.btn_materiales);
+            this.Controls.Add(this.btn_cotas);
+            this.Controls.Add(this.btn_textos);
             this.Controls.Add(this.btn_iniciaFamilias);
             this.Controls.Add(this.btn_estilosLinea);
             this.Controls.Add(this.btn_adquirirPropiedades);
@@ -171,6 +227,10 @@
         private System.Windows.Forms.Button btn_adquirirPropiedades;
         private System.Windows.Forms.Button btn_estilosLinea;
         private System.Windows.Forms.Button btn_iniciaFamilias;
-        private System.Windows.Forms.Button btn_textosCotas;
+        private System.Windows.Forms.Button btn_textos;
+        private System.Windows.Forms.Button btn_cotas;
+        private System.Windows.Forms.Button btn_materiales;
+        private System.Windows.Forms.Button btn_subproyectos;
+        private System.Windows.Forms.Button btn_parametros;
     }
 }

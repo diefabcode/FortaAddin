@@ -125,6 +125,21 @@
   <ItemGroup>
     <None Include="Resources\EstilosTextoCotas185x85.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\EstilosTextos185x85.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\EstilosCotas185x55.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Subproyectos185x85.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Parametros185x85.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Materiales185x85.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>REM if exist "$(AppData)\Autodesk\REVIT\Addins\2023" copy "$(ProjectDir)*.addin" "$(AppData)\Autodesk\REVIT\Addins\2023"

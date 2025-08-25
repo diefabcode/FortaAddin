@@ -83,6 +83,16 @@ namespace Forta.UI.WinForms.Properties {
         /// <summary>
         ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap EstilosCotas185x55 {
+            get {
+                object obj = ResourceManager.GetObject("EstilosCotas185x55", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap EstilosLinea185x85 {
             get {
                 object obj = ResourceManager.GetObject("EstilosLinea185x85", resourceCulture);
@@ -113,9 +123,29 @@ namespace Forta.UI.WinForms.Properties {
         /// <summary>
         ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap EstilosTextos185x85 {
+            get {
+                object obj = ResourceManager.GetObject("EstilosTextos185x85", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap InicializaFamilias185x85 {
             get {
                 object obj = ResourceManager.GetObject("InicializaFamilias185x85", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Materiales185x85 {
+            get {
+                object obj = ResourceManager.GetObject("Materiales185x85", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -136,6 +166,26 @@ namespace Forta.UI.WinForms.Properties {
         internal static System.Drawing.Bitmap Minimizar60x60 {
             get {
                 object obj = ResourceManager.GetObject("Minimizar60x60", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Parametros185x85 {
+            get {
+                object obj = ResourceManager.GetObject("Parametros185x85", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Subproyectos185x85 {
+            get {
+                object obj = ResourceManager.GetObject("Subproyectos185x85", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
