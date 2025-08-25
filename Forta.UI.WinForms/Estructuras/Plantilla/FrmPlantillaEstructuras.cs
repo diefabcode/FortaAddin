@@ -134,7 +134,17 @@ namespace Forta.UI.WinForms
 
         private void btn_cotas_Click(object sender, EventArgs e)
         {
-            TaskDialog.Show("FORTA", "FUNCIONALIDAD EN PROCESO");
+            DialogResult resultado = MessageBox.Show(
+                "Se crearán nuevos estilos de cota", "Estilos de Cota",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (resultado == DialogResult.Yes)
+            {
+                this.DialogResult = DialogResult.OK;
+                this.Tag = "EstilosCotas";
+                this.Close();
+            }
         }
     }
 }

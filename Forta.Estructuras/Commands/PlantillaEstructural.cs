@@ -17,6 +17,7 @@ using Forta.Core.Plantillas.Generales.Lineas.LineStyles;
 using Forta.Core.Plantillas.Generales.Lineas.ObjectStyles;
 using Forta.UI.WinForms;
 using Forta.Core.Plantillas.Generales.Textos.TextStyles;
+using Forta.Core.Plantillas.Generales.Cotas.DimensionStyles;
 
 
 #endregion
@@ -50,9 +51,10 @@ namespace Forta.Estructuras.Commands
                         AplicarTexto(commandData.Application.ActiveUIDocument.Document);
                         TaskDialog.Show("Éxito", "Se han creado los textos correctamente.");
                     }
-                    else if (accion == "EstiloCotas")
+                    else if (accion == "EstilosCotas")
                     {
-                        //AplicarCotas
+                        AplicarCotas(commandData.Application.ActiveUIDocument.Document);
+                        TaskDialog.Show("Éxito", "Se han creado/actualizado las cotas correctamente.");
                     }
                 }
 
@@ -190,7 +192,21 @@ namespace Forta.Estructuras.Commands
 
         #region
 
-        //Método AplicarCotas
+        private void AplicarCotas(Document doc)
+        {
+            using (var t = new Transaction(doc, "Aplicar Cotas – Estructuras"))
+            {
+                t.Start();
+
+                var (n1, o1) = EstructurasDimensionProfiles.General2mm();
+                DimensionStyleService.CreateOrUpdate(doc, n1, o1);
+
+                var (n2, o2) = EstructurasDimensionProfiles.General3mmRoja(); // ejemplo de segundo estilo
+                DimensionStyleService.CreateOrUpdate(doc, n2, o2);
+
+                t.Commit();
+            }
+        }
 
         #endregion
 

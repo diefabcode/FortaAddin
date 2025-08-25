@@ -65,6 +65,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\EstructurasDimensionProfiles.cs" />
     <Compile Include="Commands\EstruturasLinePatternProfiles.cs" />
     <Compile Include="Commands\PlantillaEstructural.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
