@@ -5,6 +5,42 @@ namespace Forta.Estructuras.Commands
 {
     public static class EstructurasDimensionProfiles
     {
+        private static readonly string[] TickPref = {
+            "Flecha 15 grados rellenada",  // PRIMERA PRIORIDAD
+            "Arrow Filled 15 Degree",      // SEGUNDA PRIORIDAD
+            "Flecha 20 grados rellenada",
+            "Arrow Filled 20 Degree",
+            "Flecha 30 grados rellenada",  // Última opción
+            "Arrow Filled 30 Degree",
+            "Arrow Filled",
+            "Filled Arrow"
+        };
+
+                private static readonly string[] InsideTickPref = {
+            "Diagonal 1/16",
+            "Diagonal 1/8",
+            "Diagonal 3 mm",
+            "Diagonal 3/32",
+            "Diagonal"
+        };
+
+        private static string NameSuffix(string baseName, string unitTag)
+    => $"{baseName}({unitTag})";
+
+        private const string BaseFont = "Arial";
+        private const double BaseTextSizeMm = 2.0;
+        private const double BaseOffsetFromDimLineMm = 0.7938;
+        private const int BaseDimLineWeight = 1;
+        private const int BaseTickLineWeight = 1;
+        private const double BaseDimLineExtensionMm = 0.0;
+        private const double BaseDimLineExtensionFlippedMm = 2.3813;
+        private const double BaseWitnessGapMm = 1.5875;
+        private const double BaseWitnessExtensionMm = 2.3813;
+        private static readonly Color BaseColor = new Color(0, 0, 0);
+        private const int OrientationHorizontal = 0;
+        private const int TextBackgroundTransparent = 1;
+        private const int EqFormulaTotalLength = 1;   // Longitud total
+        private const int EqDisplayMarkAndLine = 2;   // “Marca y línea”
 
         //ESTILO DE COTA 2MM SIN DECIMALES HORIZONTAL UNIDADES MILIMETROS
         public static (string name, DimStyleOptions opt) FI2mmSDHMM()
@@ -13,120 +49,87 @@ namespace Forta.Estructuras.Commands
             {
                 Text = new DimTextOptions
                 {
-                    Font = "Arial",
-                    SizeMm = 2.0,
+                    Font = BaseFont,
+                    SizeMm = BaseTextSizeMm,
                     WidthFactor = 1.0,
-                    Bold = 0, // 1 = ACTIVADO
+                    Bold = 0,
                     Italic = 0,
                     Underline = 0,
-                    Background = 1,           // 1 = Transparente
-                    OffsetFromDimLineMm = 0.7938,
-                    Orientation = 0           // Horizontal
+                    Background = TextBackgroundTransparent,
+                    OffsetFromDimLineMm = BaseOffsetFromDimLineMm,
+                    Orientation = OrientationHorizontal
                 },
                 Graphics = new DimGraphicsOptions
                 {
-                    DimLineWeight = 1,
-                    TickLineWeight = 1,
-                    DimLineExtensionMm = 0.0,
-                    DimLineExtensionFlippedMm = 2.3813,
-                    WitnessGapMm = 1.5875,
-                    WitnessExtensionMm = 2.3813,
-                    Color = new Color(0, 0, 0),
-                    // PRIORIDAD a 15 grados
-                    TickPreferred = new[] {
-                        "Flecha 15 grados rellenada",  // PRIMERA PRIORIDAD
-                        "Arrow Filled 15 Degree",      // SEGUNDA PRIORIDAD
-                        "Flecha 20 grados rellenada",
-                        "Arrow Filled 20 Degree",
-                        "Flecha 30 grados rellenada",  // Última opción
-                        "Arrow Filled 30 Degree",
-                        "Arrow Filled",
-                        "Filled Arrow"
-                    },
-                    InsideTickPreferred = new[] {
-                        "Diagonal 1/16",
-                        "Diagonal 1/8",
-                        "Diagonal 3 mm",
-                        "Diagonal 3/32",
-                        "Diagonal"
-                    }
+                    DimLineWeight = BaseDimLineWeight,
+                    TickLineWeight = BaseTickLineWeight,
+                    DimLineExtensionMm = BaseDimLineExtensionMm,
+                    DimLineExtensionFlippedMm = BaseDimLineExtensionFlippedMm,
+                    WitnessGapMm = BaseWitnessGapMm,
+                    WitnessExtensionMm = BaseWitnessExtensionMm,
+                    Color = BaseColor,
+                    TickPreferred = TickPref,
+                    InsideTickPreferred = InsideTickPref
                 },
                 Units = new DimUnitsOptions
                 {
-                    Spec = SpecTypeId.Length,
                     Unit = UnitTypeId.Millimeters,
-                    Accuracy = 1.0,   // 0 decimales
-                    UseAlternate = false
+                    Accuracy = 1.0 // sin decimales en mm
                 },
                 Equality = new DimEqualityOptions
                 {
                     EqText = "EQ",
-                    EqFormula = 1,   // Longitud total
-                    EqDisplay = 2    // Marca y línea
+                    EqFormula = EqFormulaTotalLength,
+                    EqDisplay = EqDisplayMarkAndLine
                 }
             };
-            return ("FI - 2mm SDH(mm)", opt);
+            return (NameSuffix("FI - 2mm SDH", "mm"), opt);
         }
 
         //ESTILO DE COTA 2MM CON DECIMALES HORIZONTAL UNIDADES MILIMETROS
         public static (string name, DimStyleOptions opt) FI2mmCDHMM()
         {
-            var (name, o) = FI2mmSDHMM();
-            o.Text.Orientation = 0;
+            var (_, o) = FI2mmSDHMM();
             o.Units.Unit = UnitTypeId.Millimeters;
             o.Units.Accuracy = 0.01;
-            return ("FI - 2mm CDH(mm)", o);
+            return (NameSuffix("FI - 2mm CDH", "mm"), o);
         }
 
         //ESTILO DE COTA 2MM SIN DECIMALES HORIZONTAL CENTIMETROS
         public static (string name, DimStyleOptions opt) FI2mmSDHCM()
         {
-            var (name, o) = FI2mmSDHMM();
-            o.Text.Orientation = 0;
+            var (_, o) = FI2mmSDHMM();
             o.Units.Unit = UnitTypeId.Centimeters;
             o.Units.Accuracy = 1.0;
-            return ("FI - 2mm SDH(cm)", o);
+            return (NameSuffix("FI - 2mm SDH", "cm"), o);
         }
 
         //ESTILO DE COTA 2MM CON DECIMALES HORIZONTAL CENTIMETROS
         public static (string name, DimStyleOptions opt) FI2mmCDHCM()
         {
-            var (name, o) = FI2mmSDHMM();
-            o.Text.Orientation = 0;
+            var (_, o) = FI2mmSDHMM();
             o.Units.Unit = UnitTypeId.Centimeters;
             o.Units.Accuracy = 0.01;
-            return ("FI - 2mm CDH(cm)", o);
+            return (NameSuffix("FI - 2mm CDH", "cm"), o);
         }
 
         //ESTILO DE COTA 2MM SIN DECIMALES HORIZONTAL METROS
 
         public static (string name, DimStyleOptions opt) FI2mmSDHM()
         {
-            var (name, o) = FI2mmSDHMM();
-            o.Text.Orientation = 0;
+            var (_, o) = FI2mmSDHMM();
             o.Units.Unit = UnitTypeId.Meters;
             o.Units.Accuracy = 1.0;
-            return ("FI - 2mm SDH(m)", o);
+            return (NameSuffix("FI - 2mm SDH", "m"), o);
         }
 
         //ESTILO DE COTA 2MM CON DECIMALES HORIZONTAL METROS
         public static (string name, DimStyleOptions opt) FI2mmCDHM()
         {
-            var (name, o) = FI2mmSDHMM();
-            o.Text.Orientation = 0;
+            var (_, o) = FI2mmSDHMM();
             o.Units.Unit = UnitTypeId.Meters;
             o.Units.Accuracy = 0.01;
-            return ("FI - 2mm CDH(m)", o);
-        }
-
-        // Perfil adicional para debug/testing
-        public static (string name, DimStyleOptions opt) DebugStyle()
-        {
-            var (name, o) = FI2mmSDHMM();
-            o.Text.SizeMm = 2.5;
-            o.Graphics.DimLineWeight = 1;
-            o.Graphics.Color = new Color(0, 128, 255); // Azul
-            return ("FI - Debug Style", o);
+            return (NameSuffix("FI - 2mm CDH", "m"), o);
         }
     }
 }
