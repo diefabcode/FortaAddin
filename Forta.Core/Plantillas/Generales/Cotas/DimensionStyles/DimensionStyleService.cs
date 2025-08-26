@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Linq;
 using Autodesk.Revit.DB;
-using Autodesk.Windows;
 using Autodesk.Revit.UI;
 
 namespace Forta.Core.Plantillas.Generales.Cotas.DimensionStyles
@@ -91,48 +90,19 @@ namespace Forta.Core.Plantillas.Generales.Cotas.DimensionStyles
             }
         }
 
-        private static void DebugTextBackground(DimensionType dimType, DimStyleOptions opt)
+        static void SetYesNo(ElementType t, string[] names, bool value)
         {
-            string logPath = @"C:\temp\forta_debug.txt";
-
-            try
+            // Busca por nombre localizado (ES/EN) y escribe 1/0
+            foreach (var n in names)
             {
-                System.IO.File.AppendAllText(logPath, "=== DEBUG FONDO DE TEXTO ===\n");
-                System.IO.File.AppendAllText(logPath, $"Valor deseado: {opt.Text.Background} (0=Transparente, 1=Opaco)\n");
-                // Probar con valor 1 en lugar de 0
-
-                string[] backgroundNames = {
-            "Fondo de texto", "Text Background", "Background", "Fondo",
-            "Text Background Visibility", "Fondo del texto"
-        };
-
-                foreach (var name in backgroundNames)
+                var p = t.LookupParameter(n);
+                if (p != null && !p.IsReadOnly && p.StorageType == StorageType.Integer)
                 {
-                    var param = FindParamByName(dimType, name);
-                    if (param != null)
-                    {
-                        System.IO.File.AppendAllText(logPath, $"Encontrado parámetro: {param.Definition.Name}\n");
-                        System.IO.File.AppendAllText(logPath, $"Valor actual: {param.AsInteger()}\n");
-                        System.IO.File.AppendAllText(logPath, $"ReadOnly: {param.IsReadOnly}\n");
-
-                        if (!param.IsReadOnly)
-                        {
-                            int valorAntes = param.AsInteger();
-                            param.Set(opt.Text.Background);
-                            System.IO.File.AppendAllText(logPath, $"Cambiado de {valorAntes} a {param.AsInteger()}\n");
-                        }
-                        break;
-                    }
+                    p.Set(value ? 1 : 0);
+                    return;
                 }
-
-                System.IO.File.AppendAllText(logPath, "=== FIN DEBUG FONDO ===\n\n");
-            }
-            catch (Exception ex)
-            {
-                // Si falla el logging, continuar sin error
             }
         }
-
 
 
         // VERSIÓN CORREGIDA SIN BuiltInCategory.OST_DimensionArrowheads
@@ -397,46 +367,6 @@ namespace Forta.Core.Plantillas.Generales.Cotas.DimensionStyles
         }
 
         // Método de debug para listar todos los arrowheads disponibles
-        private static void ListAllArrowheads(Document doc)
-        {
-            try
-            {
-                Debug.WriteLine("=== LISTANDO TODOS LOS ELEMENT TYPES CON KEYWORDS ===");
-
-                var allTypes = new FilteredElementCollector(doc)
-                    .WhereElementIsElementType()
-                    .Cast<ElementType>()
-                    .Where(et =>
-                    {
-                        var name = et.Name.ToLower();
-                        return name.Contains("arrow") ||
-                               name.Contains("flecha") ||
-                               name.Contains("diagonal") ||
-                               name.Contains("tick") ||
-                               name.Contains("marca") ||
-                               name.Contains("degree") ||
-                               name.Contains("grado") ||
-                               name.Contains("filled") ||
-                               name.Contains("rellen") ||
-                               name.Contains("dot") ||
-                               name.Contains("punto");
-                    })
-                    .OrderBy(et => et.Name)
-                    .ToList();
-
-                Debug.WriteLine($"Encontrados {allTypes.Count} elementos con keywords:");
-                foreach (var et in allTypes)
-                {
-                    Debug.WriteLine($"  - {et.Name} (ID: {et.Id}, Category: {et.Category?.Name ?? "null"})");
-                }
-
-                Debug.WriteLine("=== FIN LISTADO ===");
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Error listando arrowheads: {ex.Message}");
-            }
-        }
 
         // ----------------- API principal parametrizable -----------------
         public static ElementId CreateOrUpdate(Document doc, string typeName, DimStyleOptions opt)
@@ -483,11 +413,10 @@ namespace Forta.Core.Plantillas.Generales.Cotas.DimensionStyles
                 SetInt(dimType, new[] { "Fondo de texto", "Text Background" }, opt.Text.Background);
                 SetDInternal(dimType, new[] { "Factor de anchura", "Width Factor" }, opt.Text.WidthFactor);
                 SetDMm(dimType, new[] { "Desfase de texto", "Text Offset From Dimension Line" }, opt.Text.OffsetFromDimLineMm);
-                SetInt(dimType, new[] { "Negrita", "Bold" }, opt.Text.Bold);
-                SetInt(dimType, new[] { "Cursiva", "Italic" }, opt.Text.Italic);
-                SetInt(dimType, new[] { "Subrayado", "Underline" }, opt.Text.Underline);
+                SetYesNo(dimType, new[] { "Negrita", "Bold" }, opt.Text.Bold != 0);
+                SetYesNo(dimType, new[] { "Cursiva", "Italic" }, opt.Text.Italic != 0);
+                SetYesNo(dimType, new[] { "Subrayado", "Underline" }, opt.Text.Underline != 0);
                 SetInt(dimType, new[] { "Convención de lectura", "Text Orientation" }, opt.Text.Orientation);
-                DebugTextBackground(dimType, opt);
 
                 // 4) Gráficos
                 SetInt(dimType, new[] { "Grosor de línea", "Dimension Line Weight" }, opt.Graphics.DimLineWeight);
