@@ -14,9 +14,9 @@ namespace Forta.Estructuras.Commands
                     Font = "Arial",
                     SizeMm = 2.0,
                     WidthFactor = 1.0,
-                    Bold = 1, // 1 = ACTIVADO
-                    Italic = 1,
-                    Underline = 1,
+                    Bold = 0, // 1 = ACTIVADO
+                    Italic = 0,
+                    Underline = 0,
                     Background = 1,           // 1 = Transparente
                     OffsetFromDimLineMm = 0.7938,
                     Orientation = 0           // Horizontal
@@ -69,10 +69,6 @@ namespace Forta.Estructuras.Commands
         public static (string name, DimStyleOptions opt) FI2mmSDV()
         {
             var (name, o) = FI2mmSDH();
-            o.Text.SizeMm = 2.0;
-            o.Graphics.DimLineWeight = 2;
-            o.Graphics.TickLineWeight = 2;
-            o.Graphics.Color = new Color(0, 0, 0);
             o.Text.Orientation = 1;
             o.Units.Unit = UnitTypeId.Centimeters;
             return ("FI - 2mm SDV", o);
