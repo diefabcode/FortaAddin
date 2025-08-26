@@ -18,7 +18,7 @@ using Forta.Core.Plantillas.Generales.Lineas.ObjectStyles;
 using Forta.UI.WinForms;
 using Forta.Core.Plantillas.Generales.Textos.TextStyles;
 using Forta.Core.Plantillas.Generales.Cotas.DimensionStyles;
-
+using System.Diagnostics;
 
 #endregion
 
@@ -198,14 +198,35 @@ namespace Forta.Estructuras.Commands
             {
                 t.Start();
 
-                var (n1, o1) = EstructurasDimensionProfiles.General2mm();
-                DimensionStyleService.CreateOrUpdate(doc, n1, o1);
+                try
+                {
+                    Debug.WriteLine("=== INICIANDO CREACIÓN DE COTAS ===");
 
-                var (n2, o2) = EstructurasDimensionProfiles.General3mmRoja();
-                DimensionStyleService.CreateOrUpdate(doc, n2, o2);
+                    // Crear el primer estilo
+                    var (n1, o1) = EstructurasDimensionProfiles.General2mm();
+                    Debug.WriteLine($"Creando estilo: {n1}");
+                    var id1 = DimensionStyleService.CreateOrUpdate(doc, n1, o1);
+                    Debug.WriteLine($"Estilo {n1} creado con ID: {id1}");
 
-                t.Commit();
+                    // Crear el segundo estilo
+                    var (n2, o2) = EstructurasDimensionProfiles.General3mmRoja();
+                    Debug.WriteLine($"Creando estilo: {n2}");
+                    var id2 = DimensionStyleService.CreateOrUpdate(doc, n2, o2);
+                    Debug.WriteLine($"Estilo {n2} creado con ID: {id2}");
+
+                    t.Commit();
+                    Debug.WriteLine("=== COTAS CREADAS EXITOSAMENTE ===");
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"ERROR en AplicarCotas: {ex.Message}");
+                    Debug.WriteLine($"StackTrace: {ex.StackTrace}");
+                    t.RollBack();
+                    throw; // Re-lanzar para que se muestre el error al usuario
+                }
             }
+        }
+    }
         }
 
         #endregion
@@ -221,5 +242,5 @@ namespace Forta.Estructuras.Commands
 
 
 
-    }
-}
+    
+

@@ -12,12 +12,12 @@ namespace Forta.Estructuras.Commands
                 Text = new DimTextOptions
                 {
                     Font = "Arial",
-                    SizeMm = 2.0,              //
+                    SizeMm = 2.0,
                     WidthFactor = 1.0,
                     Bold = 0,
                     Italic = 0,
                     Underline = 0,
-                    Background = 0,           // 0 = Transparente
+                    Background = 1,           // 1 = Transparente
                     OffsetFromDimLineMm = 0.7938,
                     Orientation = 0           // Arriba, luego izquierda
                 },
@@ -30,8 +30,24 @@ namespace Forta.Estructuras.Commands
                     WitnessGapMm = 1.5875,
                     WitnessExtensionMm = 2.3813,
                     Color = new Color(0, 0, 0),
-                    TickPreferred = new[] { "Arrow Filled 15 Degree", "Flecha 15 grados rellenada", "Flecha 15"  },
-                    InsideTickPreferred = new[] { "Diagonal 1/16", "Diagonal 1/8", "Diagonal 3 mm", "Diagonal 3/32", "Diagonal" }
+                    // PRIORIDAD a 15 grados
+                    TickPreferred = new[] {
+                        "Flecha 15 grados rellenada",  // PRIMERA PRIORIDAD
+                        "Arrow Filled 15 Degree",      // SEGUNDA PRIORIDAD
+                        "Flecha 20 grados rellenada",
+                        "Arrow Filled 20 Degree",
+                        "Flecha 30 grados rellenada",  // Última opción
+                        "Arrow Filled 30 Degree",
+                        "Arrow Filled",
+                        "Filled Arrow"
+                    },
+                    InsideTickPreferred = new[] {
+                        "Diagonal 1/16",
+                        "Diagonal 1/8",
+                        "Diagonal 3 mm",
+                        "Diagonal 3/32",
+                        "Diagonal"
+                    }
                 },
                 Units = new DimUnitsOptions
                 {
@@ -50,14 +66,24 @@ namespace Forta.Estructuras.Commands
             return ("FI - 2mm SDH", opt);
         }
 
-        // Otro estilo (cambias lo que difiera)
         public static (string name, DimStyleOptions opt) General3mmRoja()
         {
             var (name, o) = General2mm();
             o.Text.SizeMm = 3.0;
             o.Graphics.DimLineWeight = 2;
+            o.Graphics.TickLineWeight = 2;
             o.Graphics.Color = new Color(255, 0, 0);
             return ("FI – Cota General 3mm Roja", o);
+        }
+
+        // Perfil adicional para debug/testing
+        public static (string name, DimStyleOptions opt) DebugStyle()
+        {
+            var (name, o) = General2mm();
+            o.Text.SizeMm = 2.5;
+            o.Graphics.DimLineWeight = 1;
+            o.Graphics.Color = new Color(0, 128, 255); // Azul
+            return ("FI - Debug Style", o);
         }
     }
 }
