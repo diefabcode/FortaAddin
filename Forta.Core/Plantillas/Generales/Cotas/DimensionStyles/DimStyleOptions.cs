@@ -7,7 +7,7 @@ namespace Forta.Core.Plantillas.Generales.Cotas.DimensionStyles
         public string Font = "Arial";
         public double SizeMm = 2.0;
         public double WidthFactor = 1.0;
-        public int Bold = 1, Italic = 0, Underline = 1;
+        public int Bold = 0, Italic = 0, Underline = 0;
         public int Background = 0; // 0 transparente
         public double OffsetFromDimLineMm = 0.7938;
         // 0 = Arriba-luego-izq (dependiendo build)

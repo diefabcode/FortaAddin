@@ -14,9 +14,9 @@ namespace Forta.Estructuras.Commands
                     Font = "Arial",
                     SizeMm = 2.0,
                     WidthFactor = 1.0,
-                    Bold = 0,
-                    Italic = 0,
-                    Underline = 0,
+                    Bold = 1,
+                    Italic = 1,
+                    Underline = 1,
                     Background = 1,           // 1 = Transparente
                     OffsetFromDimLineMm = 0.7938,
                     Orientation = 0           // Arriba, luego izquierda

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 
@@ -92,17 +93,66 @@ namespace Forta.Core.Plantillas.Generales.Cotas.DimensionStyles
 
         static void SetYesNo(ElementType t, string[] names, bool value)
         {
-            // Busca por nombre localizado (ES/EN) y escribe 1/0
-            foreach (var n in names)
+            try
             {
-                var p = t.LookupParameter(n);
-                if (p != null && !p.IsReadOnly && p.StorageType == StorageType.Integer)
+                var p = FindParamByName(t, names);
+                if (p == null) { System.Diagnostics.Debug.WriteLine($"[WARN] No param {string.Join("/", names)}"); return; }
+                if (p.IsReadOnly) { System.Diagnostics.Debug.WriteLine($"[WARN] RO {p.Definition?.Name}"); return; }
+                if (p.StorageType != StorageType.Integer) { System.Diagnostics.Debug.WriteLine($"[WARN] Not Int {p.Definition?.Name}"); return; }
+
+                // Preferir el acceso por BuiltInParameter si es un parámetro interno (Id negativo)
+                Parameter target = null;
+                int id = p.Id.IntegerValue;
+                if (id < 0)
                 {
-                    p.Set(value ? 1 : 0);
-                    return;
+                    var bip = (BuiltInParameter)id;        // <- DIM/TEXT STYLE BOLD/ITALIC/UNDERLINE
+                    target = t.get_Parameter(bip);
                 }
+                if (target == null) target = p;
+
+                target.Set(value ? 1 : 0);
+
+                // Verificar inmediatamente
+                var after = target.AsInteger();
+                System.Diagnostics.Debug.WriteLine($"Set {string.Join("/", names)} -> {after}");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"SetYesNo {string.Join("/", names)}: {ex.Message}");
             }
         }
+
+        static void DebugShowTextFlags(DimensionType dimType)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine($"DimType: {dimType.Name}  (Id {dimType.Id.IntegerValue})");
+
+            string[][] checks = new[]
+            {
+        new[] { "Negrita", "Bold" },
+        new[] { "Cursiva", "Italic" },
+        new[] { "Subrayado", "Underline" }
+    };
+
+            foreach (var names in checks)
+            {
+                var p = FindParamByName(dimType, names);
+                if (p == null)
+                {
+                    sb.AppendLine($"{string.Join("/", names)}  ->  [NO PARAM]");
+                    continue;
+                }
+
+                string defName = p.Definition?.Name ?? "(sin nombre)";
+                string st = p.StorageType.ToString();
+                string ro = p.IsReadOnly ? "RO" : "RW";
+                string val = p.StorageType == StorageType.Integer ? p.AsInteger().ToString() : "(no int)";
+                sb.AppendLine($"{defName} [{st},{ro}] = {val}");
+            }
+
+            TaskDialog.Show("Dim Text Flags", sb.ToString());
+        }
+
 
 
         // VERSIÓN CORREGIDA SIN BuiltInCategory.OST_DimensionArrowheads
@@ -413,10 +463,9 @@ namespace Forta.Core.Plantillas.Generales.Cotas.DimensionStyles
                 SetInt(dimType, new[] { "Fondo de texto", "Text Background" }, opt.Text.Background);
                 SetDInternal(dimType, new[] { "Factor de anchura", "Width Factor" }, opt.Text.WidthFactor);
                 SetDMm(dimType, new[] { "Desfase de texto", "Text Offset From Dimension Line" }, opt.Text.OffsetFromDimLineMm);
-                SetYesNo(dimType, new[] { "Negrita", "Bold" }, opt.Text.Bold != 0);
-                SetYesNo(dimType, new[] { "Cursiva", "Italic" }, opt.Text.Italic != 0);
-                SetYesNo(dimType, new[] { "Subrayado", "Underline" }, opt.Text.Underline != 0);
+                              
                 SetInt(dimType, new[] { "Convención de lectura", "Text Orientation" }, opt.Text.Orientation);
+                DebugShowTextFlags(dimType); // ← llamada temporal de diagnóstico
 
                 // 4) Gráficos
                 SetInt(dimType, new[] { "Grosor de línea", "Dimension Line Weight" }, opt.Graphics.DimLineWeight);
@@ -436,6 +485,19 @@ namespace Forta.Core.Plantillas.Generales.Cotas.DimensionStyles
                 SetStr(dimType, new[] { "Texto de igualdad", "Equality Text" }, opt.Equality.EqText);
                 SetInt(dimType, new[] { "Fórmula de igualdad", "Equality Formula" }, opt.Equality.EqFormula);
                 SetInt(dimType, new[] { "Visualización de referencia de igualdad", "Equality Display" }, opt.Equality.EqDisplay);
+
+                using (var st = new SubTransaction(doc))
+                {
+                    st.Start();
+
+                    SetYesNo(dimType, new[] { "Negrita", "Bold" }, opt.Text.Bold != 0);
+                    SetYesNo(dimType, new[] { "Cursiva", "Italic" }, opt.Text.Italic != 0);
+                    SetYesNo(dimType, new[] { "Subrayado", "Underline" }, opt.Text.Underline != 0);
+
+                    st.Commit();
+                }
+
+                doc.Regenerate();
 
                 Debug.WriteLine($"=== DimensionType {typeName} configurado correctamente ===");
                 return dimType.Id;
