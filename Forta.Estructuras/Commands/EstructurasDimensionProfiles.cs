@@ -5,7 +5,9 @@ namespace Forta.Estructuras.Commands
 {
     public static class EstructurasDimensionProfiles
     {
-        public static (string name, DimStyleOptions opt) FI2mmSDH()
+
+        //ESTILO DE COTA 2MM SIN DECIMALES HORIZONTAL UNIDADES MILIMETROS
+        public static (string name, DimStyleOptions opt) FI2mmSDHMM()
         {
             var opt = new DimStyleOptions
             {
@@ -52,8 +54,8 @@ namespace Forta.Estructuras.Commands
                 Units = new DimUnitsOptions
                 {
                     Spec = SpecTypeId.Length,
-                    Unit = UnitTypeId.Meters,
-                    Accuracy = 0.01,   // 2 decimales
+                    Unit = UnitTypeId.Millimeters,
+                    Accuracy = 1.0,   // 0 decimales
                     UseAlternate = false
                 },
                 Equality = new DimEqualityOptions
@@ -63,21 +65,64 @@ namespace Forta.Estructuras.Commands
                     EqDisplay = 2    // Marca y línea
                 }
             };
-            return ("FI - 2mm SDH", opt);
+            return ("FI - 2mm SDH(mm)", opt);
         }
 
-        public static (string name, DimStyleOptions opt) FI2mmSDV()
+        //ESTILO DE COTA 2MM CON DECIMALES HORIZONTAL UNIDADES MILIMETROS
+        public static (string name, DimStyleOptions opt) FI2mmCDHMM()
         {
-            var (name, o) = FI2mmSDH();
-            o.Text.Orientation = 1;
+            var (name, o) = FI2mmSDHMM();
+            o.Text.Orientation = 0;
+            o.Units.Unit = UnitTypeId.Millimeters;
+            o.Units.Accuracy = 0.01;
+            return ("FI - 2mm CDH(mm)", o);
+        }
+
+        //ESTILO DE COTA 2MM SIN DECIMALES HORIZONTAL CENTIMETROS
+        public static (string name, DimStyleOptions opt) FI2mmSDHCM()
+        {
+            var (name, o) = FI2mmSDHMM();
+            o.Text.Orientation = 0;
             o.Units.Unit = UnitTypeId.Centimeters;
-            return ("FI - 2mm SDV", o);
+            o.Units.Accuracy = 1.0;
+            return ("FI - 2mm SDH(cm)", o);
+        }
+
+        //ESTILO DE COTA 2MM CON DECIMALES HORIZONTAL CENTIMETROS
+        public static (string name, DimStyleOptions opt) FI2mmCDHCM()
+        {
+            var (name, o) = FI2mmSDHMM();
+            o.Text.Orientation = 0;
+            o.Units.Unit = UnitTypeId.Centimeters;
+            o.Units.Accuracy = 0.01;
+            return ("FI - 2mm CDH(cm)", o);
+        }
+
+        //ESTILO DE COTA 2MM SIN DECIMALES HORIZONTAL METROS
+
+        public static (string name, DimStyleOptions opt) FI2mmSDHM()
+        {
+            var (name, o) = FI2mmSDHMM();
+            o.Text.Orientation = 0;
+            o.Units.Unit = UnitTypeId.Meters;
+            o.Units.Accuracy = 1.0;
+            return ("FI - 2mm SDH(m)", o);
+        }
+
+        //ESTILO DE COTA 2MM CON DECIMALES HORIZONTAL METROS
+        public static (string name, DimStyleOptions opt) FI2mmCDHM()
+        {
+            var (name, o) = FI2mmSDHMM();
+            o.Text.Orientation = 0;
+            o.Units.Unit = UnitTypeId.Meters;
+            o.Units.Accuracy = 0.01;
+            return ("FI - 2mm CDH(m)", o);
         }
 
         // Perfil adicional para debug/testing
         public static (string name, DimStyleOptions opt) DebugStyle()
         {
-            var (name, o) = FI2mmSDH();
+            var (name, o) = FI2mmSDHMM();
             o.Text.SizeMm = 2.5;
             o.Graphics.DimLineWeight = 1;
             o.Graphics.Color = new Color(0, 128, 255); // Azul
@@ -85,3 +130,6 @@ namespace Forta.Estructuras.Commands
         }
     }
 }
+
+
+//SERÍA BUENO AGREGAR UNA REVISIÓN QUE DETECTE SI HAY COTAS QUE SI TIENEN DECIMALES PERO NO LOS ESTÁ MOSTRANDO

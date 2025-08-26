@@ -203,16 +203,44 @@ namespace Forta.Estructuras.Commands
                     Debug.WriteLine("=== INICIANDO CREACIÓN DE COTAS ===");
 
                     // Crear el primer estilo
-                    var (n1, o1) = EstructurasDimensionProfiles.FI2mmSDH();
+                    var (n1, o1) = EstructurasDimensionProfiles.FI2mmSDHMM();
                     Debug.WriteLine($"Creando estilo: {n1}");
                     var id1 = DimensionStyleService.CreateOrUpdate(doc, n1, o1);
                     Debug.WriteLine($"Estilo {n1} creado con ID: {id1}");
 
                     // Crear el segundo estilo
-                    var (n2, o2) = EstructurasDimensionProfiles.FI2mmSDV();
+                    var (n2, o2) = EstructurasDimensionProfiles.FI2mmCDHMM();
                     Debug.WriteLine($"Creando estilo: {n2}");
                     var id2 = DimensionStyleService.CreateOrUpdate(doc, n2, o2);
                     Debug.WriteLine($"Estilo {n2} creado con ID: {id2}");
+
+                    //Crear el tercer estilo
+
+                    var (n3, o3) = EstructurasDimensionProfiles.FI2mmSDHCM();
+                    Debug.WriteLine($"Creando estilo: {n3}");
+                    var id3 = DimensionStyleService.CreateOrUpdate(doc, n3, o3);
+                    Debug.WriteLine($"Estilo {n3} creado con ID: {id3}");
+
+                    //Crear el cuarto estilo
+
+                    var (n4, o4) = EstructurasDimensionProfiles.FI2mmCDHCM();
+                    Debug.WriteLine($"Creando estilo: {n4}");
+                    var id4 = DimensionStyleService.CreateOrUpdate(doc, n4, o4);
+                    Debug.WriteLine($"Estilo {n4} creado con ID: {id4}");
+
+                    //Crear el quinto estilo
+
+                    var (n5, o5) = EstructurasDimensionProfiles.FI2mmCDHM();
+                    Debug.WriteLine($"Creando estilo: {n5}");
+                    var id5 = DimensionStyleService.CreateOrUpdate(doc, n5, o5);
+                    Debug.WriteLine($"Estilo {n5} creado con ID: {id5}");
+
+                    //Crear el sexto estilo
+
+                    var (n6, o6) = EstructurasDimensionProfiles.FI2mmSDHM();
+                    Debug.WriteLine($"Creando estilo: {n6}");
+                    var id6 = DimensionStyleService.CreateOrUpdate(doc, n6, o6);
+                    Debug.WriteLine($"Estilo {n6} creado con ID: {id6}");
 
                     t.Commit();
                     Debug.WriteLine("=== COTAS CREADAS EXITOSAMENTE ===");

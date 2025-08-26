@@ -226,16 +226,15 @@ namespace Forta.Core.Plantillas.Generales.Cotas.DimensionStyles
                 // 2) Unidades principales
                 try
                 {
-                    var fo = new FormatOptions(opt.Units.Spec, opt.Units.Unit)
-                    {
-                        UseDefault = false,
-                        Accuracy = opt.Units.Accuracy
-                    };
+                    var fo = dimType.GetUnitsFormatOptions(); // toma el spec correcto del tipo
+                    fo.UseDefault = false;
+                    fo.SetUnitTypeId(opt.Units.Unit);         // p.ej. UnitTypeId.Centimeters
+                    fo.Accuracy = opt.Units.Accuracy;         // p.ej. 0.01
                     dimType.SetUnitsFormatOptions(fo);
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine("Error configurando unidades principales: " + ex.Message);
+                    Debug.WriteLine("Error configurando unidades principales (robusto): " + ex.Message);
                 }
 
                 // Alternativas ON/OFF (por nombre)
