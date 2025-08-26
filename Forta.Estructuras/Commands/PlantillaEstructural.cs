@@ -195,59 +195,85 @@ namespace Forta.Estructuras.Commands
 
         private void AplicarCotas(Document doc, bool depurarCotas)
         {
+            if (doc == null) throw new ArgumentNullException(nameof(doc));
+
+            // Definir factories FI
+            var factories = new Func<(string name, DimStyleOptions opt)>[]
+            {
+        EstructurasDimensionProfiles.FI2mmSDHMM,
+        EstructurasDimensionProfiles.FI2mmCDHMM,
+        EstructurasDimensionProfiles.FI2mmSDHCM,
+        EstructurasDimensionProfiles.FI2mmCDHCM,
+        EstructurasDimensionProfiles.FI2mmCDHM,
+        EstructurasDimensionProfiles.FI2mmSDHM
+            };
+
+            // 1) CREAR / ACTUALIZAR ESTILOS "FI..."
+            int creadosActualizados = 0;
             using (var t = new Transaction(doc, "Aplicar Cotas – Estructuras"))
             {
                 t.Start();
                 try
                 {
-                    Debug.WriteLine("=== INICIANDO CREACIÓN DE COTAS ===");
-
-                    var factories = new Func<(string name, DimStyleOptions opt)>[]
-                    {
-                EstructurasDimensionProfiles.FI2mmSDHMM,
-                EstructurasDimensionProfiles.FI2mmCDHMM,
-                EstructurasDimensionProfiles.FI2mmSDHCM,
-                EstructurasDimensionProfiles.FI2mmCDHCM,
-                EstructurasDimensionProfiles.FI2mmCDHM,
-                EstructurasDimensionProfiles.FI2mmSDHM
-                    };
+                    Debug.WriteLine("=== INICIANDO CREACIÓN/ACTUALIZACIÓN DE ESTILOS DE COTA (FI) ===");
 
                     foreach (var f in factories)
                     {
                         var (name, opt) = f();
                         Debug.WriteLine($"Creando estilo: {name}");
                         var id = DimensionStyleService.CreateOrUpdate(doc, name, opt);
-                        Debug.WriteLine($"Estilo {name} creado con ID: {id}");
+                        if (id != null && id != ElementId.InvalidElementId)
+                            creadosActualizados++;
+                        Debug.WriteLine($"Estilo {name} creado/actualizado con ID: {id}");
                     }
 
                     t.Commit();
-                    Debug.WriteLine("=== COTAS CREADAS EXITOSAMENTE ===");
+                    Debug.WriteLine($"=== FIN CREACIÓN/ACTUALIZACIÓN: {creadosActualizados} estilos FI procesados ===");
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"ERROR en AplicarCotas: {ex.Message}");
-                    Debug.WriteLine($"StackTrace: {ex.StackTrace}");
+                    Debug.WriteLine($"[COTAS][ERROR] {ex.Message}");
                     t.RollBack();
                     throw;
                 }
             }
 
-            // 🔽 Fuera de la transacción (evita transacciones anidadas)
+            // 2) DEPURAR ESTILOS/INSTANCIAS QUE NO ESTÉN EN LA LISTA DE FI
             if (depurarCotas)
             {
-                var eliminadas = DimStyleCleanup.DepurarCotasNoFI(doc);
-                Debug.WriteLine($"[DepurarCotas] Eliminadas: {eliminadas}");
+                int eliminados = 0;
+                try
+                {
+                    // Extraer la lista blanca de nombres FI
+                    var nombresFI = factories.Select(f => f().name).ToList();
+                    eliminados = DimStyleCleanup.DepurarManteniendoFI(doc, nombresFI);
 
-                TaskDialog.Show("Forta – Cotas",
-                    eliminadas > 0
-                    ? $"Se eliminaron {eliminadas} cotas cuyo tipo no empieza con \"FI\"."
-                    : "No se encontraron cotas para depurar.");
+                    Debug.WriteLine($"[DEPURACIÓN] Eliminados (instancias+tipos no FI): {eliminados}");
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"[DEPURACIÓN][ERROR] {ex.Message}");
+                }
+
+                TaskDialog.Show(
+                    "Estilos de cota (FI)",
+                    $"Estilos FI creados/actualizados: {creadosActualizados}\n" +
+                    $"Eliminados no FI: {eliminados}"
+                );
+            }
+            else
+            {
+                TaskDialog.Show(
+                    "Estilos de cota (FI)",
+                    $"Estilos FI creados/actualizados: {creadosActualizados}\n" +
+                    $"Depuración de cotas: NO ejecutada"
+                );
             }
         }
-    }
-    }
-        
 
+    }
+}
+       
         #endregion
 
         #region BOTON DE MATERIALES
