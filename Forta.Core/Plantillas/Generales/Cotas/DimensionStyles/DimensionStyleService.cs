@@ -10,13 +10,18 @@ namespace Forta.Core.Plantillas.Generales.Cotas.DimensionStyles
         // -------- helpers por nombre (ES/EN) compatibles Revit 2023 --------
         private static Parameter FindParamByName(Element e, params string[] names)
         {
-            foreach (Parameter p in e.GetParameters(""))
+            // Recorre TODOS los parámetros del elemento (tipo y compartidos)
+            foreach (Parameter p in e.Parameters)
             {
                 var n = p.Definition?.Name ?? "";
                 foreach (var key in names)
+                {
                     if (!string.IsNullOrWhiteSpace(key) &&
                         n.IndexOf(key, StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
                         return p;
+                    }
+                }
             }
             return null;
         }
@@ -46,16 +51,49 @@ namespace Forta.Core.Plantillas.Generales.Cotas.DimensionStyles
             try { var p = FindParamByName(e, names); if (p != null && !p.IsReadOnly) { int rgb = (c.Red << 16) | (c.Green << 8) | c.Blue; p.Set(rgb); } }
             catch (Exception ex) { Debug.WriteLine($"{string.Join("/", names)}: {ex.Message}"); }
         }
+
+        // --- Flecha prioritaria ES/EN para la "Marca" de cota ---
+        static readonly string[] PreferredArrowNames = new[]
+        {
+    "Arrow Filled 15 Degree",
+    "Arrow 15 Degree Filled",
+    "Flecha 15 grados rellena",
+    "Flecha 15° rellena",
+    "Flecha rellena 15 grados",
+    "Flecha 15 grados rellenada"
+};
+
+        static void SetDimensionTickMark(Document doc, DimensionType dimType)
+        {
+            var pTick = FindParamByName(dimType, "Marca", "Tick Mark");
+            if (pTick == null || pTick.IsReadOnly) return;
+
+            // buscamos una flecha que coincida con los nombres preferidos
+            var chosen = FindArrowhead(doc, PreferredArrowNames);
+            if (chosen != null) pTick.Set(chosen.Id);
+        }
+
         private static Element FindArrowhead(Document doc, string[] preferred)
         {
+            // Recolecta TODOS los tipos y filtra por categorías que suenen a flechas (ES/EN),
+            // sin depender de BuiltInCategory ni ArrowheadType (robusto a versiones/idiomas).
             var types = new FilteredElementCollector(doc)
                 .WhereElementIsElementType()
                 .Cast<ElementType>()
-                .Where(et => et.Category == null)
+                .Where(et =>
+                {
+                    var cn = et.Category?.Name ?? "";
+                    return cn.IndexOf("arrow", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                           cn.IndexOf("arrowhead", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                           cn.IndexOf("arrow head", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                           cn.IndexOf("flecha", StringComparison.OrdinalIgnoreCase) >= 0;
+                })
                 .ToList();
+
             foreach (var name in preferred)
             {
-                var t = types.FirstOrDefault(x => x.Name.IndexOf(name, StringComparison.OrdinalIgnoreCase) >= 0);
+                var t = types.FirstOrDefault(x =>
+                    x.Name.IndexOf(name, StringComparison.OrdinalIgnoreCase) >= 0);
                 if (t != null) return t;
             }
             return null;
@@ -105,6 +143,7 @@ namespace Forta.Core.Plantillas.Generales.Cotas.DimensionStyles
             // 4) Gráficos
             SetInt(dimType, new[] { "Grosor de línea", "Dimension Line Weight" }, opt.Graphics.DimLineWeight);
             SetInt(dimType, new[] { "Grosor de línea de marca", "Tick Mark Line Weight" }, opt.Graphics.TickLineWeight);
+            SetDimensionTickMark(doc, dimType);
             SetDMm(dimType, new[] { "Extensión de línea de cota", "Dimension Line Extension" }, opt.Graphics.DimLineExtensionMm);
             SetDMm(dimType, new[] { "Extensión de línea de cota volteada", "Dimension Line Extension (Flipped)" }, opt.Graphics.DimLineExtensionFlippedMm);
             SetDMm(dimType, new[] { "Separación entre línea de referencia y elemento", "Witness Line Gap" }, opt.Graphics.WitnessGapMm);
@@ -123,25 +162,7 @@ namespace Forta.Core.Plantillas.Generales.Cotas.DimensionStyles
                 }
             }
             catch (Exception ex) { Debug.WriteLine("Pattern: " + ex.Message); }
-
-            // Marcas (externa e interior)
-            try
-            {
-                var pTick = FindParamByName(dimType, "Marca", "Tick Mark");
-                if (pTick != null && !pTick.IsReadOnly)
-                {
-                    var chosen = FindArrowhead(doc, opt.Graphics.TickPreferred);
-                    if (chosen != null) pTick.Set(chosen.Id);
-                }
-                var pInside = FindParamByName(dimType, "Marca interior", "Inside Tick Mark");
-                if (pInside != null && !pInside.IsReadOnly)
-                {
-                    var chosen = FindArrowhead(doc, opt.Graphics.InsideTickPreferred);
-                    if (chosen != null) pInside.Set(chosen.Id);
-                }
-                SetInt(dimType, new[] { "Visualización de marca interior", "Inside Tick Display" }, 1); // Dinámica
-            }
-            catch (Exception ex) { Debug.WriteLine("Ticks: " + ex.Message); }
+        
 
             // 5) Igualdad
             SetStr(dimType, new[] { "Texto de igualdad", "Equality Text" }, opt.Equality.EqText);

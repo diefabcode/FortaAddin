@@ -201,7 +201,7 @@ namespace Forta.Estructuras.Commands
                 var (n1, o1) = EstructurasDimensionProfiles.General2mm();
                 DimensionStyleService.CreateOrUpdate(doc, n1, o1);
 
-                var (n2, o2) = EstructurasDimensionProfiles.General3mmRoja(); // ejemplo de segundo estilo
+                var (n2, o2) = EstructurasDimensionProfiles.General3mmRoja();
                 DimensionStyleService.CreateOrUpdate(doc, n2, o2);
 
                 t.Commit();
