@@ -54,7 +54,7 @@ namespace Forta.Estructuras.Commands
                     }
                     else if (accion == "EstilosCotas")
                     {
-                        AplicarCotas(commandData.Application.ActiveUIDocument.Document);
+                        AplicarCotas(commandData.Application.ActiveUIDocument.Document, form.DepurarCotas);
                         TaskDialog.Show("Éxito", "Se han creado/actualizado las cotas correctamente.");
                     }
                 }
@@ -193,25 +193,25 @@ namespace Forta.Estructuras.Commands
 
         #region
 
-        private void AplicarCotas(Document doc)
+        private void AplicarCotas(Document doc, bool depurarCotas)
         {
             using (var t = new Transaction(doc, "Aplicar Cotas – Estructuras"))
             {
                 t.Start();
-
                 try
                 {
                     Debug.WriteLine("=== INICIANDO CREACIÓN DE COTAS ===");
 
                     var factories = new Func<(string name, DimStyleOptions opt)>[]
-{
-                    EstructurasDimensionProfiles.FI2mmSDHMM,
-                    EstructurasDimensionProfiles.FI2mmCDHMM,
-                    EstructurasDimensionProfiles.FI2mmSDHCM,
-                    EstructurasDimensionProfiles.FI2mmCDHCM,
-                    EstructurasDimensionProfiles.FI2mmCDHM,
-                    EstructurasDimensionProfiles.FI2mmSDHM
-};
+                    {
+                EstructurasDimensionProfiles.FI2mmSDHMM,
+                EstructurasDimensionProfiles.FI2mmCDHMM,
+                EstructurasDimensionProfiles.FI2mmSDHCM,
+                EstructurasDimensionProfiles.FI2mmCDHCM,
+                EstructurasDimensionProfiles.FI2mmCDHM,
+                EstructurasDimensionProfiles.FI2mmSDHM
+                    };
+
                     foreach (var f in factories)
                     {
                         var (name, opt) = f();
@@ -219,7 +219,6 @@ namespace Forta.Estructuras.Commands
                         var id = DimensionStyleService.CreateOrUpdate(doc, name, opt);
                         Debug.WriteLine($"Estilo {name} creado con ID: {id}");
                     }
-
 
                     t.Commit();
                     Debug.WriteLine("=== COTAS CREADAS EXITOSAMENTE ===");
@@ -229,12 +228,25 @@ namespace Forta.Estructuras.Commands
                     Debug.WriteLine($"ERROR en AplicarCotas: {ex.Message}");
                     Debug.WriteLine($"StackTrace: {ex.StackTrace}");
                     t.RollBack();
-                    throw; // Re-lanzar para que se muestre el error al usuario
+                    throw;
                 }
+            }
+
+            // 🔽 Fuera de la transacción (evita transacciones anidadas)
+            if (depurarCotas)
+            {
+                var eliminadas = DimStyleCleanup.DepurarCotasNoFI(doc);
+                Debug.WriteLine($"[DepurarCotas] Eliminadas: {eliminadas}");
+
+                TaskDialog.Show("Forta – Cotas",
+                    eliminadas > 0
+                    ? $"Se eliminaron {eliminadas} cotas cuyo tipo no empieza con \"FI\"."
+                    : "No se encontraron cotas para depurar.");
             }
         }
     }
-        }
+    }
+        
 
         #endregion
 

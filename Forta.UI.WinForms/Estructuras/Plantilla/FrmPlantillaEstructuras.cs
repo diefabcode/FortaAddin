@@ -16,6 +16,7 @@ namespace Forta.UI.WinForms
     public partial class FrmPlantillaEstructuras : Form
     {
 
+        public bool DepurarCotas => chbx_depurarCotas.Checked;
         private bool dragging = false;
         private Point dragCursorPoint;
         private Point dragFormPoint;
@@ -145,6 +146,14 @@ namespace Forta.UI.WinForms
                 this.Tag = "EstilosCotas";
                 this.Close();
             }
+        }
+
+        private void chbx_depurarCotas_CheckedChanged(object sender, EventArgs e)
+        {
+            // Feedback visual: muestra si la depuración se aplicará al crear estilos
+            chbx_depurarCotas.Text = chbx_depurarCotas.Checked
+                ? "Depurar cotas: ACTIVADO"
+                : "Depurar cotas: DESACTIVADO";
         }
     }
 }

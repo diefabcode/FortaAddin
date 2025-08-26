@@ -69,6 +69,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Plantillas\Generales\Cotas\DimensionStyles\DimensionStyleService.cs" />
+    <Compile Include="Plantillas\Generales\Cotas\DimensionStyles\DimStyleCleanup.cs" />
     <Compile Include="Plantillas\Generales\Cotas\DimensionStyles\DimStyleOptions.cs" />
     <Compile Include="Plantillas\Generales\Lineas\EliminarAnteriores\LinePatternsCleanup.cs" />
     <Compile Include="Plantillas\Generales\Lineas\LinePatterns\LinePatternsService.cs" />
