@@ -5,7 +5,7 @@ namespace Forta.Estructuras.Commands
 {
     public static class EstructurasDimensionProfiles
     {
-        public static (string name, DimStyleOptions opt) General2mm()
+        public static (string name, DimStyleOptions opt) FI2mmSDH()
         {
             var opt = new DimStyleOptions
             {
@@ -14,12 +14,12 @@ namespace Forta.Estructuras.Commands
                     Font = "Arial",
                     SizeMm = 2.0,
                     WidthFactor = 1.0,
-                    Bold = 1,
+                    Bold = 1, // 1 = ACTIVADO
                     Italic = 1,
                     Underline = 1,
                     Background = 1,           // 1 = Transparente
                     OffsetFromDimLineMm = 0.7938,
-                    Orientation = 0           // Arriba, luego izquierda
+                    Orientation = 0           // Horizontal
                 },
                 Graphics = new DimGraphicsOptions
                 {
@@ -66,20 +66,22 @@ namespace Forta.Estructuras.Commands
             return ("FI - 2mm SDH", opt);
         }
 
-        public static (string name, DimStyleOptions opt) General3mmRoja()
+        public static (string name, DimStyleOptions opt) FI2mmSDV()
         {
-            var (name, o) = General2mm();
-            o.Text.SizeMm = 3.0;
+            var (name, o) = FI2mmSDH();
+            o.Text.SizeMm = 2.0;
             o.Graphics.DimLineWeight = 2;
             o.Graphics.TickLineWeight = 2;
-            o.Graphics.Color = new Color(255, 0, 0);
-            return ("FI – Cota General 3mm Roja", o);
+            o.Graphics.Color = new Color(0, 0, 0);
+            o.Text.Orientation = 1;
+            o.Units.Unit = UnitTypeId.Centimeters;
+            return ("FI - 2mm SDV", o);
         }
 
         // Perfil adicional para debug/testing
         public static (string name, DimStyleOptions opt) DebugStyle()
         {
-            var (name, o) = General2mm();
+            var (name, o) = FI2mmSDH();
             o.Text.SizeMm = 2.5;
             o.Graphics.DimLineWeight = 1;
             o.Graphics.Color = new Color(0, 128, 255); // Azul

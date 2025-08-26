@@ -203,13 +203,13 @@ namespace Forta.Estructuras.Commands
                     Debug.WriteLine("=== INICIANDO CREACIÓN DE COTAS ===");
 
                     // Crear el primer estilo
-                    var (n1, o1) = EstructurasDimensionProfiles.General2mm();
+                    var (n1, o1) = EstructurasDimensionProfiles.FI2mmSDH();
                     Debug.WriteLine($"Creando estilo: {n1}");
                     var id1 = DimensionStyleService.CreateOrUpdate(doc, n1, o1);
                     Debug.WriteLine($"Estilo {n1} creado con ID: {id1}");
 
                     // Crear el segundo estilo
-                    var (n2, o2) = EstructurasDimensionProfiles.General3mmRoja();
+                    var (n2, o2) = EstructurasDimensionProfiles.FI2mmSDV();
                     Debug.WriteLine($"Creando estilo: {n2}");
                     var id2 = DimensionStyleService.CreateOrUpdate(doc, n2, o2);
                     Debug.WriteLine($"Estilo {n2} creado con ID: {id2}");

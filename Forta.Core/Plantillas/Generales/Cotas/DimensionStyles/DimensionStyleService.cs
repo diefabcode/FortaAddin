@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Autodesk.Revit.DB;
-using Autodesk.Revit.UI;
 
 namespace Forta.Core.Plantillas.Generales.Cotas.DimensionStyles
 {
@@ -93,83 +92,28 @@ namespace Forta.Core.Plantillas.Generales.Cotas.DimensionStyles
 
         static void SetYesNo(ElementType t, string[] names, bool value)
         {
-            try
-            {
-                var p = FindParamByName(t, names);
-                if (p == null) { System.Diagnostics.Debug.WriteLine($"[WARN] No param {string.Join("/", names)}"); return; }
-                if (p.IsReadOnly) { System.Diagnostics.Debug.WriteLine($"[WARN] RO {p.Definition?.Name}"); return; }
-                if (p.StorageType != StorageType.Integer) { System.Diagnostics.Debug.WriteLine($"[WARN] Not Int {p.Definition?.Name}"); return; }
+            var p = FindParamByName(t, names);
+            if (p == null) return;
+            if (p.IsReadOnly) return;
+            if (p.StorageType != StorageType.Integer) return;
 
-                // Preferir el acceso por BuiltInParameter si es un parámetro interno (Id negativo)
-                Parameter target = null;
-                int id = p.Id.IntegerValue;
-                if (id < 0)
-                {
-                    var bip = (BuiltInParameter)id;        // <- DIM/TEXT STYLE BOLD/ITALIC/UNDERLINE
-                    target = t.get_Parameter(bip);
-                }
-                if (target == null) target = p;
-
-                target.Set(value ? 1 : 0);
-
-                // Verificar inmediatamente
-                var after = target.AsInteger();
-                System.Diagnostics.Debug.WriteLine($"Set {string.Join("/", names)} -> {after}");
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"SetYesNo {string.Join("/", names)}: {ex.Message}");
-            }
+            p.Set(value ? 1 : 0);
         }
-
-        static void DebugShowTextFlags(DimensionType dimType)
-        {
-            var sb = new StringBuilder();
-            sb.AppendLine($"DimType: {dimType.Name}  (Id {dimType.Id.IntegerValue})");
-
-            string[][] checks = new[]
-            {
-        new[] { "Negrita", "Bold" },
-        new[] { "Cursiva", "Italic" },
-        new[] { "Subrayado", "Underline" }
-    };
-
-            foreach (var names in checks)
-            {
-                var p = FindParamByName(dimType, names);
-                if (p == null)
-                {
-                    sb.AppendLine($"{string.Join("/", names)}  ->  [NO PARAM]");
-                    continue;
-                }
-
-                string defName = p.Definition?.Name ?? "(sin nombre)";
-                string st = p.StorageType.ToString();
-                string ro = p.IsReadOnly ? "RO" : "RW";
-                string val = p.StorageType == StorageType.Integer ? p.AsInteger().ToString() : "(no int)";
-                sb.AppendLine($"{defName} [{st},{ro}] = {val}");
-            }
-
-            TaskDialog.Show("Dim Text Flags", sb.ToString());
-        }
-
-
-
-        // VERSIÓN CORREGIDA SIN BuiltInCategory.OST_DimensionArrowheads
 
         static void SetDimensionTickMark(Document doc, DimensionType dimType)
         {
             try
             {
-                Debug.WriteLine($"=== Configurando Tick Mark para: {dimType.Name} ===");
-
-                // Usar solo BuiltInParameters que SÍ existen en Revit 2023
-                BuiltInParameter[] tickParams = {
+                // BuiltInParameters que existen en Revit 2023
+                BuiltInParameter[] tickParams =
+                {
             BuiltInParameter.DIM_LEADER_ARROWHEAD,
             BuiltInParameter.LEADER_ARROWHEAD
         };
 
                 Parameter tickParam = null;
+
+                // 1) Intentar por BuiltInParameter
                 foreach (var bip in tickParams)
                 {
                     try
@@ -178,13 +122,7 @@ namespace Forta.Core.Plantillas.Generales.Cotas.DimensionStyles
                         if (p != null && !p.IsReadOnly)
                         {
                             tickParam = p;
-                            Debug.WriteLine($"✅ Parámetro encontrado: {bip} -> {p.Definition.Name}");
-                            Debug.WriteLine($"Valor actual: {p.AsElementId()}");
                             break;
-                        }
-                        else if (p != null)
-                        {
-                            Debug.WriteLine($"⚠️ Parámetro encontrado pero ReadOnly: {bip} -> {p.Definition.Name}");
                         }
                     }
                     catch (Exception ex)
@@ -193,121 +131,69 @@ namespace Forta.Core.Plantillas.Generales.Cotas.DimensionStyles
                     }
                 }
 
-                // Si no funciona con BuiltInParameter, usar búsqueda por nombre
+                // 2) Fallback por nombre (ES/EN) si no se encontró
                 if (tickParam == null)
                 {
-                    Debug.WriteLine("Probando búsqueda por nombre de parámetro...");
-
                     foreach (Parameter p in dimType.Parameters)
                     {
-                        var paramName = p.Definition?.Name ?? "";
+                        var paramName = p.Definition?.Name ?? string.Empty;
 
-                        if (paramName.Equals("Marca", StringComparison.OrdinalIgnoreCase) ||
+                        bool esTick =
+                            paramName.Equals("Marca", StringComparison.OrdinalIgnoreCase) ||
                             paramName.Equals("Tick Mark", StringComparison.OrdinalIgnoreCase) ||
-                            paramName.Contains("Arrow"))
-                        {
-                            Debug.WriteLine($"Parámetro encontrado por nombre: {paramName}");
-                            Debug.WriteLine($"ReadOnly: {p.IsReadOnly}, StorageType: {p.StorageType}");
+                            paramName.IndexOf("Arrow", StringComparison.OrdinalIgnoreCase) >= 0;
 
-                            if (!p.IsReadOnly && p.StorageType == StorageType.ElementId)
-                            {
-                                tickParam = p;
-                                break;
-                            }
+                        if (esTick && !p.IsReadOnly && p.StorageType == StorageType.ElementId)
+                        {
+                            tickParam = p;
+                            break;
                         }
                     }
                 }
 
-                if (tickParam == null)
-                {
-                    Debug.WriteLine("❌ No se encontró parámetro de tick mark accesible");
+                // Si no hay parámetro editable, salir
+                if (tickParam == null) return;
 
-                    // Debug: Listar TODOS los parámetros ElementId del DimensionType
-                    Debug.WriteLine("--- TODOS LOS PARÁMETROS ElementId ---");
-                    foreach (Parameter p in dimType.Parameters)
-                    {
-                        if (p.StorageType == StorageType.ElementId)
-                        {
-                            Debug.WriteLine($"  - {p.Definition?.Name} = {p.AsElementId()} (ReadOnly: {p.IsReadOnly})");
-                        }
-                    }
-                    return;
-                }
-
-                // Buscar la flecha específicamente
+                // 3) Elegir la flecha priorizando 15°
                 var allTypes = new FilteredElementCollector(doc)
                     .WhereElementIsElementType()
                     .Cast<ElementType>()
                     .ToList();
 
-                // Nombres con PRIORIDAD a 15 grados
-                string[] arrowNames = {
-            "Flecha 15 grados rellenada",  // PRIMERA PRIORIDAD
-            "Arrow Filled 15 Degree",      // SEGUNDA PRIORIDAD
+                string[] arrowNames =
+                {
+            "Flecha 15 grados rellenada",
+            "Arrow Filled 15 Degree",
             "Flecha 20 grados rellenada",
             "Arrow Filled 20 Degree",
-            "Flecha 30 grados rellenada",  // Última opción
+            "Flecha 30 grados rellenada",
             "Arrow Filled 30 Degree"
         };
 
                 Element chosenArrow = null;
+
+                // 3a) Búsqueda exacta por nombres preferidos
                 foreach (var arrowName in arrowNames)
                 {
                     chosenArrow = allTypes.FirstOrDefault(et =>
                         et.Name.Equals(arrowName, StringComparison.OrdinalIgnoreCase));
-
-                    if (chosenArrow != null)
-                    {
-                        Debug.WriteLine($"✅ Flecha encontrada: {chosenArrow.Name} (ID: {chosenArrow.Id})");
-                        break;
-                    }
+                    if (chosenArrow != null) break;
                 }
 
-                // Si no encuentra las específicas, buscar cualquier flecha
+                // 3b) Si no hay exacta, tomar cualquier “flecha” rellena
                 if (chosenArrow == null)
                 {
-                    Debug.WriteLine("Buscando cualquier flecha disponible...");
-
-                    var arrows = allTypes.Where(et =>
-                        (et.Name.ToLower().Contains("flecha") || et.Name.ToLower().Contains("arrow")) &&
-                        (et.Name.ToLower().Contains("rellen") || et.Name.ToLower().Contains("filled")))
-                        .ToList();
-
-                    Debug.WriteLine($"Flechas rellenas encontradas: {arrows.Count}");
-                    foreach (var arrow in arrows)
-                    {
-                        Debug.WriteLine($"  - {arrow.Name}");
-                    }
-
-                    chosenArrow = arrows.FirstOrDefault();
+                    chosenArrow = allTypes.FirstOrDefault(et =>
+                        (et.Name.IndexOf("flecha", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                         et.Name.IndexOf("arrow", StringComparison.OrdinalIgnoreCase) >= 0) &&
+                        (et.Name.IndexOf("rellen", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                         et.Name.IndexOf("filled", StringComparison.OrdinalIgnoreCase) >= 0));
                 }
 
+                // 4) Aplicar si se encontró algo
                 if (chosenArrow != null)
                 {
-                    Debug.WriteLine($"Aplicando flecha: {chosenArrow.Name}");
-                    Debug.WriteLine($"Valor antes: {tickParam.AsElementId()}");
-
                     tickParam.Set(chosenArrow.Id);
-
-                    Debug.WriteLine($"Valor después: {tickParam.AsElementId()}");
-                    Debug.WriteLine("✅ Tick mark aplicado exitosamente");
-                }
-                else
-                {
-                    Debug.WriteLine("❌ No se encontró ninguna flecha para aplicar");
-
-                    // Lista todas las opciones disponibles
-                    var allArrows = allTypes.Where(et =>
-                        et.Name.ToLower().Contains("flecha") ||
-                        et.Name.ToLower().Contains("arrow") ||
-                        et.Name.ToLower().Contains("diagonal"))
-                        .OrderBy(et => et.Name);
-
-                    Debug.WriteLine("--- TODAS LAS OPCIONES DISPONIBLES ---");
-                    foreach (var arrow in allArrows)
-                    {
-                        Debug.WriteLine($"  - {arrow.Name}");
-                    }
                 }
             }
             catch (Exception ex)
@@ -317,117 +203,15 @@ namespace Forta.Core.Plantillas.Generales.Cotas.DimensionStyles
             }
         }
 
-
-
-        private static Element FindBestArrowhead(Document doc)
-        {
-            // Nombres preferidos en orden de prioridad - SOLO FLECHAS, NO DIAGONALES
-            string[] preferredNames = new[]
-            {
-                // Español - Flechas rellenas
-                "Flecha 15 grados rellena",
-                "Flecha 15° rellena",
-                "Flecha rellena 15 grados",
-                "Flecha 15 grados rellenada",
-                "Flecha 15 rellenada",
-                "Flecha rellena",
-                // Inglés - Flechas rellenas
-                "Arrow Filled 15 Degree",
-                "Arrow 15 Degree Filled",
-                "Arrow Filled 15°",
-                "15 Degree Arrow Filled",
-                "Arrow Filled",
-                "Filled Arrow",
-                // Fallbacks - Solo flechas, NO diagonales
-                "Arrow",
-                "Flecha"
-            };
-
-            try
-            {
-                Debug.WriteLine("Buscando arrowheads en todos los ElementTypes...");
-
-                // Buscar en todos los ElementTypes que puedan ser arrowheads
-                var allTypes = new FilteredElementCollector(doc)
-                    .WhereElementIsElementType()
-                    .Cast<ElementType>()
-                    .ToList();
-
-                Debug.WriteLine($"Total ElementTypes en documento: {allTypes.Count}");
-
-                // Filtrar por nombres que contengan palabras clave de arrowheads - SOLO FLECHAS
-                var candidateArrowheads = allTypes.Where(et =>
-                {
-                    var name = et.Name.ToLower();
-                    return (name.Contains("arrow") || name.Contains("flecha")) &&
-                           (name.Contains("filled") || name.Contains("rellen") ||
-                            name.Contains("15") || name.Contains("degree") || name.Contains("grado"));
-                }).ToList();
-
-                Debug.WriteLine($"Candidatos encontrados: {candidateArrowheads.Count}");
-                foreach (var candidate in candidateArrowheads)
-                {
-                    Debug.WriteLine($"  - {candidate.Name} (Category: {candidate.Category?.Name ?? "null"})");
-                }
-
-                // Buscar por nombres preferidos
-                foreach (var preferredName in preferredNames)
-                {
-                    var match = candidateArrowheads.FirstOrDefault(et =>
-                        et.Name.IndexOf(preferredName, StringComparison.OrdinalIgnoreCase) >= 0);
-
-                    if (match != null)
-                    {
-                        Debug.WriteLine($"Encontrado arrowhead preferido: {match.Name}");
-                        return match;
-                    }
-                }
-
-                // Fallback 1: Cualquier arrow filled
-                var filledArrow = candidateArrowheads.FirstOrDefault(et =>
-                    (et.Name.ToLower().Contains("filled") || et.Name.ToLower().Contains("rellen")) &&
-                    (et.Name.ToLower().Contains("arrow") || et.Name.ToLower().Contains("flecha")) &&
-                    !et.Name.ToLower().Contains("diagonal")); // EXCLUIR diagonales
-
-                if (filledArrow != null)
-                {
-                    Debug.WriteLine($"Usando fallback filled arrow: {filledArrow.Name}");
-                    return filledArrow;
-                }
-
-                // Fallback 2: Cualquier arrow (sin diagonal)
-                var anyArrow = candidateArrowheads.FirstOrDefault(et =>
-                    (et.Name.ToLower().Contains("arrow") || et.Name.ToLower().Contains("flecha")) &&
-                    !et.Name.ToLower().Contains("diagonal")); // EXCLUIR diagonales
-
-                if (anyArrow != null)
-                {
-                    Debug.WriteLine($"Usando fallback cualquier arrow: {anyArrow.Name}");
-                    return anyArrow;
-                }
-
-                Debug.WriteLine("No se encontró ningún arrowhead adecuado (solo flechas)");
-                return null;
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Error en FindBestArrowhead: {ex.Message}");
-                return null;
-            }
-        }
-
-        // Método de debug para listar todos los arrowheads disponibles
-
-        // ----------------- API principal parametrizable -----------------
         public static ElementId CreateOrUpdate(Document doc, string typeName, DimStyleOptions opt)
         {
-            Debug.WriteLine($"=== Creando/Actualizando DimensionType: {typeName} ===");
-
             try
             {
                 // 1) buscar/duplicar
-                var dimTypes = new FilteredElementCollector(doc).OfClass(typeof(DimensionType)).Cast<DimensionType>().ToList();
-                Debug.WriteLine($"DimensionTypes encontrados: {dimTypes.Count}");
+                var dimTypes = new FilteredElementCollector(doc)
+                    .OfClass(typeof(DimensionType))
+                    .Cast<DimensionType>()
+                    .ToList();
 
                 var dimType = dimTypes.FirstOrDefault(x => x.Name == typeName);
                 if (dimType == null)
@@ -436,18 +220,18 @@ namespace Forta.Core.Plantillas.Generales.Cotas.DimensionStyles
                     if (baseType == null)
                         throw new InvalidOperationException("No se encontró DimensionType base para duplicar.");
 
-                    Debug.WriteLine($"Duplicando desde: {baseType.Name}");
                     dimType = baseType.Duplicate(typeName) as DimensionType;
                 }
-
-                Debug.WriteLine($"DimensionType obtenido: {dimType.Name} (ID: {dimType.Id})");
 
                 // 2) Unidades principales
                 try
                 {
-                    var fo = new FormatOptions(opt.Units.Spec, opt.Units.Unit) { UseDefault = false, Accuracy = opt.Units.Accuracy };
+                    var fo = new FormatOptions(opt.Units.Spec, opt.Units.Unit)
+                    {
+                        UseDefault = false,
+                        Accuracy = opt.Units.Accuracy
+                    };
                     dimType.SetUnitsFormatOptions(fo);
-                    Debug.WriteLine("Unidades configuradas correctamente");
                 }
                 catch (Exception ex)
                 {
@@ -462,17 +246,17 @@ namespace Forta.Core.Plantillas.Generales.Cotas.DimensionStyles
                 SetStr(dimType, new[] { "Tipo de letra", "Text Font" }, opt.Text.Font);
                 SetInt(dimType, new[] { "Fondo de texto", "Text Background" }, opt.Text.Background);
                 SetDInternal(dimType, new[] { "Factor de anchura", "Width Factor" }, opt.Text.WidthFactor);
+                SetYesNo(dimType, new[] { "Negrita", "Bold" }, opt.Text.Bold != 0);
+                SetYesNo(dimType, new[] { "Cursiva", "Italic" }, opt.Text.Italic != 0);
+                SetYesNo(dimType, new[] { "Subrayado", "Underline" }, opt.Text.Underline != 0);
                 SetDMm(dimType, new[] { "Desfase de texto", "Text Offset From Dimension Line" }, opt.Text.OffsetFromDimLineMm);
-                              
                 SetInt(dimType, new[] { "Convención de lectura", "Text Orientation" }, opt.Text.Orientation);
-                DebugShowTextFlags(dimType); // ← llamada temporal de diagnóstico
 
-                // 4) Gráficos
+                // 4) Gráfica
                 SetInt(dimType, new[] { "Grosor de línea", "Dimension Line Weight" }, opt.Graphics.DimLineWeight);
                 SetInt(dimType, new[] { "Grosor de línea de marca", "Tick Mark Line Weight" }, opt.Graphics.TickLineWeight);
 
-                // Aplicar el tick mark - AQUÍ ES DONDE ESTAVA EL PROBLEMA
-                Debug.WriteLine("Configurando tick mark...");
+                // Tick mark
                 SetDimensionTickMark(doc, dimType);
 
                 SetDMm(dimType, new[] { "Extensión de línea de cota", "Dimension Line Extension" }, opt.Graphics.DimLineExtensionMm);
@@ -486,20 +270,7 @@ namespace Forta.Core.Plantillas.Generales.Cotas.DimensionStyles
                 SetInt(dimType, new[] { "Fórmula de igualdad", "Equality Formula" }, opt.Equality.EqFormula);
                 SetInt(dimType, new[] { "Visualización de referencia de igualdad", "Equality Display" }, opt.Equality.EqDisplay);
 
-                using (var st = new SubTransaction(doc))
-                {
-                    st.Start();
-
-                    SetYesNo(dimType, new[] { "Negrita", "Bold" }, opt.Text.Bold != 0);
-                    SetYesNo(dimType, new[] { "Cursiva", "Italic" }, opt.Text.Italic != 0);
-                    SetYesNo(dimType, new[] { "Subrayado", "Underline" }, opt.Text.Underline != 0);
-
-                    st.Commit();
-                }
-
                 doc.Regenerate();
-
-                Debug.WriteLine($"=== DimensionType {typeName} configurado correctamente ===");
                 return dimType.Id;
             }
             catch (Exception ex)
@@ -509,5 +280,6 @@ namespace Forta.Core.Plantillas.Generales.Cotas.DimensionStyles
                 throw;
             }
         }
+
     }
 }
