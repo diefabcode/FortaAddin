@@ -18,8 +18,6 @@ using Forta.Core.Plantillas.Generales.Lineas.ObjectStyles;
 using Forta.UI.WinForms;
 using Forta.Core.Plantillas.Generales.Textos.TextStyles;
 using Forta.Core.Plantillas.Generales.Cotas.DimensionStyles;
-using System.Diagnostics;
-using System;
 
 #endregion
 
@@ -193,6 +191,35 @@ namespace Forta.Estructuras.Commands
 
         #region
 
+
+        // Agrega este método a tu clase PlantillaEstructural para debuggear
+        private void DebugEstilosCotas(Document doc)
+        {
+            Debug.WriteLine("=== DEBUG: ESTILOS DE COTA ANTES DE DEPURAR ===");
+
+            var allTypes = new FilteredElementCollector(doc)
+                .OfClass(typeof(DimensionType))
+                .WhereElementIsElementType()
+                .Cast<DimensionType>()
+                .ToList();
+
+            foreach (var dt in allTypes)
+            {
+                var instances = new FilteredElementCollector(doc)
+                    .OfCategory(BuiltInCategory.OST_Dimensions)
+                    .WhereElementIsNotElementType()
+                    .OfClass(typeof(Dimension))
+                    .Cast<Dimension>()
+                    .Where(d => d.GetTypeId() == dt.Id)
+                    .ToList();
+
+                Debug.WriteLine($"Tipo: '{dt.Name}' - Instancias: {instances.Count}");
+            }
+
+            Debug.WriteLine("=== FIN DEBUG ===");
+        }
+
+        // Y modifica tu método AplicarCotas COMPLETO así:
         private void AplicarCotas(Document doc, bool depurarCotas)
         {
             if (doc == null) throw new ArgumentNullException(nameof(doc));
@@ -225,6 +252,7 @@ namespace Forta.Estructuras.Commands
 
                     t.Commit();
                     Debug.WriteLine("=== COTAS (FI) LISTAS ===");
+                    
                 }
                 catch (Exception ex)
                 {
@@ -235,19 +263,20 @@ namespace Forta.Estructuras.Commands
                 }
             }
 
+
             // 2) DEPURAR con lista blanca (a prueba de orden)
             if (depurarCotas)
             {
                 // nombres FI esperados según tus factories
                 var nombresFI = factories.Select(f => f().name).ToList();
-
+                
                 var eliminadas = DimStyleCleanup.DepurarManteniendoFI(doc, nombresFI);
                 Debug.WriteLine($"[DepurarCotas] Eliminadas: {eliminadas}");
 
-                TaskDialog.Show("Forta – Cotas",
+                TaskDialog.Show("FORTA – Cotas",
                     eliminadas > 0
-                    ? $"Se eliminaron {eliminadas} elementos (instancias/tipos) cuyo estilo no es FI."
-                    : "No se encontraron cotas/tipos no FI para depurar.");
+                    ? $"Depuración completada.\nSe eliminaron {eliminadas} elementos cuyo estilo no pertenece a la plantilla FORTA."
+                    : "Depuración completada.\nNo se encontraron elementos para depurar.");
             }
         }
     }
