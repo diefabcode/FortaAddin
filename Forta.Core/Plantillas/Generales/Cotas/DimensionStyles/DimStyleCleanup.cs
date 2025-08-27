@@ -2,15 +2,13 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Autodesk.Revit.DB;
 
 namespace Forta.Core.Plantillas.Generales.Cotas.DimensionStyles
 {
     public static class DimStyleCleanup
     {
-        // Normaliza el nombre: quita espacios raros/ocultos y espacios múltiples
+        // === Agrega este helper si aún no existe en la clase ===
         private static string Normalize(string s)
         {
             if (s == null) return string.Empty;
@@ -21,22 +19,46 @@ namespace Forta.Core.Plantillas.Generales.Cotas.DimensionStyles
             return s.Trim();
         }
 
-        /// <summary>
-        /// Elimina instancias y tipos de cota cuyo NOMBRE de DimensionType
-        /// NO esté en la lista blanca "nombresFi".
-        /// </summary>
-        public static int DepurarManteniendoFI(Document doc, IEnumerable<string> nombresFi)
+        // === Pega este método EXACTO ===
+        public static int DepurarManteniendoFI(Document doc, IEnumerable<string> _nombresFiNoUsados)
         {
             if (doc == null) throw new ArgumentNullException(nameof(doc));
-            var whitelist = new HashSet<string>(
-                (nombresFi ?? Enumerable.Empty<string>()).Select(Normalize),
-                StringComparer.OrdinalIgnoreCase
-            );
 
-            int eliminadasInstancias = 0;
-            int eliminadosTipos = 0;
+            // --- Detectar si un nombre "parece FI" (contiene la marca FI como token o al inicio)
+            bool EsFI(string name)
+            {
+                var n = Normalize(name).ToUpperInvariant();
+                if (string.IsNullOrEmpty(n)) return false;
 
-            // ---------- FASE 1: borrar INSTANCIAS cuyo tipo NO esté en whitelist
+                // 1) Arranque con "FI" (cubre "FI2mm..." y "FI - 2mm ...")
+                if (n.StartsWith("FI")) return true;
+
+                // 2) " FI " como palabra o con separadores comunes (evita falsos positivos como "PERFIL")
+                return n.Contains(" FI ")
+                    || n.Contains(" FI-")
+                    || n.Contains("-FI ")
+                    || n.Contains(" FI(")
+                    || n.Contains("(FI")
+                    || n.EndsWith(" FI");
+            }
+
+            // --- Todos los tipos de cota
+            var allTypes = new FilteredElementCollector(doc)
+                .OfClass(typeof(DimensionType))
+                .WhereElementIsElementType()
+                .Cast<DimensionType>()
+                .ToList();
+
+            // Si no hay NI UN solo tipo con "FI", no borramos nada (freno de seguridad)
+            if (!allTypes.Any(dt => EsFI(dt.Name)))
+            {
+                Debug.WriteLine("[DepurarCotas] Abortado: no se detectan tipos con 'FI' en el nombre.");
+                return 0;
+            }
+
+            int eliminadas = 0;
+
+            // --- FASE 1: borrar INSTANCIAS cuyo tipo NO contenga "FI"
             var instanciasNoFI = new FilteredElementCollector(doc)
                 .OfCategory(BuiltInCategory.OST_Dimensions)
                 .WhereElementIsNotElementType()
@@ -45,52 +67,54 @@ namespace Forta.Core.Plantillas.Generales.Cotas.DimensionStyles
                 .Where(d =>
                 {
                     var dt = doc.GetElement(d.GetTypeId()) as DimensionType;
-                    var name = Normalize(dt?.Name);
-                    return !whitelist.Contains(name);
+                    return dt == null || !EsFI(dt.Name);
                 })
                 .Select(d => d.Id)
                 .ToList();
 
             if (instanciasNoFI.Count > 0)
             {
-                using (var t = new Transaction(doc, "Depurar cotas (instancias) no FI"))
+                using (var t = new Transaction(doc, "Depurar cotas (instancias) sin 'FI'"))
                 {
                     t.Start();
-                    var deleted = doc.Delete(instanciasNoFI);
-                    eliminadasInstancias = deleted?.Count ?? 0;
+                    eliminadas += doc.Delete(instanciasNoFI)?.Count ?? 0;
                     t.Commit();
                 }
             }
 
-            // ---------- FASE 2: borrar TIPOS cuyo nombre NO esté en whitelist
-            var tiposNoFI = new FilteredElementCollector(doc)
-                .OfClass(typeof(DimensionType))
-                .WhereElementIsElementType()
-                .Cast<DimensionType>()
-                .Where(dt => !whitelist.Contains(Normalize(dt.Name)))
+            // --- FASE 2: borrar TIPOS cuyo nombre NO contenga "FI" (si ya no tienen dependencias)
+            var tiposNoFI = allTypes
+                .Where(dt => !EsFI(dt.Name))
                 .ToList();
 
-            using (var t = new Transaction(doc, "Depurar estilos de cota no FI"))
+            if (tiposNoFI.Count > 0)
             {
-                t.Start();
-                foreach (var dt in tiposNoFI)
+                using (var t = new Transaction(doc, "Depurar estilos de cota sin 'FI'"))
                 {
-                    try
+                    t.Start();
+                    foreach (var dt in tiposNoFI)
                     {
-                        // Si aún hay dependencias, saltar
-                        var deps = dt.GetDependentElements(new ElementClassFilter(typeof(Dimension)));
-                        if (deps != null && deps.Count > 0) continue;
+                        try
+                        {
+                            // Si aún hay instancias colgando de este tipo, saltar
+                            var deps = dt.GetDependentElements(new ElementClassFilter(typeof(Dimension)));
+                            if (deps != null && deps.Count > 0) continue;
 
-                        var deleted = doc.Delete(dt.Id);
-                        if (deleted != null && deleted.Count > 0) eliminadosTipos++;
+                            var deleted = doc.Delete(dt.Id);
+                            if (deleted != null && deleted.Count > 0) eliminadas++;
+                        }
+                        catch
+                        {
+                            // Saltar tipos que Revit no permita borrar
+                        }
                     }
-                    catch { /* saltar tipos que Revit no deje borrar */ }
+                    t.Commit();
                 }
-                t.Commit();
             }
 
-            Debug.WriteLine($"[DepurarCotas] Instancias: {eliminadasInstancias}, Tipos: {eliminadosTipos}");
-            return eliminadasInstancias + eliminadosTipos;
+            Debug.WriteLine($"[DepurarCotas] Eliminados (instancias + tipos) sin 'FI': {eliminadas}");
+            return eliminadas;
         }
+
     }
 }

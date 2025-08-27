@@ -197,7 +197,7 @@ namespace Forta.Estructuras.Commands
         {
             if (doc == null) throw new ArgumentNullException(nameof(doc));
 
-            // Definir factories FI
+            // 0) Definir factories UNA sola vez (usaremos sus nombres para la lista blanca)
             var factories = new Func<(string name, DimStyleOptions opt)>[]
             {
         EstructurasDimensionProfiles.FI2mmSDHMM,
@@ -208,69 +208,48 @@ namespace Forta.Estructuras.Commands
         EstructurasDimensionProfiles.FI2mmSDHM
             };
 
-            // 1) CREAR / ACTUALIZAR ESTILOS "FI..."
-            int creadosActualizados = 0;
+            // 1) CREAR / ACTUALIZAR estilos FI
             using (var t = new Transaction(doc, "Aplicar Cotas – Estructuras"))
             {
                 t.Start();
                 try
                 {
-                    Debug.WriteLine("=== INICIANDO CREACIÓN/ACTUALIZACIÓN DE ESTILOS DE COTA (FI) ===");
+                    Debug.WriteLine("=== INICIANDO CREACIÓN DE COTAS (FI) ===");
 
                     foreach (var f in factories)
                     {
                         var (name, opt) = f();
-                        Debug.WriteLine($"Creando estilo: {name}");
-                        var id = DimensionStyleService.CreateOrUpdate(doc, name, opt);
-                        if (id != null && id != ElementId.InvalidElementId)
-                            creadosActualizados++;
-                        Debug.WriteLine($"Estilo {name} creado/actualizado con ID: {id}");
+                        Debug.WriteLine($"Creando/Actualizando: {name}");
+                        DimensionStyleService.CreateOrUpdate(doc, name, opt);
                     }
 
                     t.Commit();
-                    Debug.WriteLine($"=== FIN CREACIÓN/ACTUALIZACIÓN: {creadosActualizados} estilos FI procesados ===");
+                    Debug.WriteLine("=== COTAS (FI) LISTAS ===");
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"[COTAS][ERROR] {ex.Message}");
+                    Debug.WriteLine($"ERROR en AplicarCotas: {ex.Message}");
+                    Debug.WriteLine($"StackTrace: {ex.StackTrace}");
                     t.RollBack();
                     throw;
                 }
             }
 
-            // 2) DEPURAR ESTILOS/INSTANCIAS QUE NO ESTÉN EN LA LISTA DE FI
+            // 2) DEPURAR con lista blanca (a prueba de orden)
             if (depurarCotas)
             {
-                int eliminados = 0;
-                try
-                {
-                    // Extraer la lista blanca de nombres FI
-                    var nombresFI = factories.Select(f => f().name).ToList();
-                    eliminados = DimStyleCleanup.DepurarManteniendoFI(doc, nombresFI);
+                // nombres FI esperados según tus factories
+                var nombresFI = factories.Select(f => f().name).ToList();
 
-                    Debug.WriteLine($"[DEPURACIÓN] Eliminados (instancias+tipos no FI): {eliminados}");
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"[DEPURACIÓN][ERROR] {ex.Message}");
-                }
+                var eliminadas = DimStyleCleanup.DepurarManteniendoFI(doc, nombresFI);
+                Debug.WriteLine($"[DepurarCotas] Eliminadas: {eliminadas}");
 
-                TaskDialog.Show(
-                    "Estilos de cota (FI)",
-                    $"Estilos FI creados/actualizados: {creadosActualizados}\n" +
-                    $"Eliminados no FI: {eliminados}"
-                );
-            }
-            else
-            {
-                TaskDialog.Show(
-                    "Estilos de cota (FI)",
-                    $"Estilos FI creados/actualizados: {creadosActualizados}\n" +
-                    $"Depuración de cotas: NO ejecutada"
-                );
+                TaskDialog.Show("Forta – Cotas",
+                    eliminadas > 0
+                    ? $"Se eliminaron {eliminadas} elementos (instancias/tipos) cuyo estilo no es FI."
+                    : "No se encontraron cotas/tipos no FI para depurar.");
             }
         }
-
     }
 }
        
