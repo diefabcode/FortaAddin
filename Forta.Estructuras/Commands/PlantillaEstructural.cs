@@ -47,7 +47,7 @@ namespace Forta.Estructuras.Commands
                     }
                     else if (accion == "EstilosTexto")
                     {
-                        AplicarTexto(commandData.Application.ActiveUIDocument.Document);
+                        AplicarTexto(commandData.Application.ActiveUIDocument.Document, form.DepurarTextos);
                         TaskDialog.Show("Éxito", "Se han creado los textos correctamente.");
                     }
                     else if (accion == "EstilosCotas")
@@ -127,7 +127,7 @@ namespace Forta.Estructuras.Commands
         #endregion
 
         #region ESTILOS DE TEXTO
-        private void AplicarTexto(Document doc)
+        private void AplicarTexto(Document doc, bool depurarTextos)
         {
             using (Transaction trans = new Transaction(doc, "Aplicar Texto"))
             {
@@ -185,7 +185,20 @@ namespace Forta.Estructuras.Commands
                 trans.Commit();
             }
 
-            
+            // DEPURAR textos si está habilitado
+            if (depurarTextos)
+            {
+                // nombres FI esperados según los estilos creados
+                var nombresFI = new[] { "FI Flecha Arial 2mm", "FI Punto Arial 2mm", "FI Diagonal Arial 2mm" };
+                
+                var eliminadas = TextStyleCleanup.DepurarManteniendoFI(doc, nombresFI);
+                Debug.WriteLine($"[DepurarTextos] Eliminadas: {eliminadas}");
+
+                TaskDialog.Show("FORTA – Textos",
+                    eliminadas > 0
+                    ? $"Depuración completada.\nSe eliminaron {eliminadas} elementos de texto cuyo estilo no pertenece a la plantilla FORTA."
+                    : "Depuración completada.\nNo se encontraron elementos de texto para depurar.");
+            }
         }
         #endregion
 

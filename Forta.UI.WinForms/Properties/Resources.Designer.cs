@@ -83,6 +83,26 @@ namespace Forta.UI.WinForms.Properties {
         /// <summary>
         ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Depurar85x26 {
+            get {
+                object obj = ResourceManager.GetObject("Depurar85x26", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Depurar86x24 {
+            get {
+                object obj = ResourceManager.GetObject("Depurar86x24", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap EstilosCotas185x55 {
             get {
                 object obj = ResourceManager.GetObject("EstilosCotas185x55", resourceCulture);

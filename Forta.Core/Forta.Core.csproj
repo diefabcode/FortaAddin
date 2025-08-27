@@ -68,13 +68,14 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Plantillas\Generales\Cotas\DimensionStyles\DimensionStyleService.cs" />
-    <Compile Include="Plantillas\Generales\Cotas\DimensionStyles\DimStyleCleanup.cs" />
-    <Compile Include="Plantillas\Generales\Cotas\DimensionStyles\DimStyleOptions.cs" />
+    <Compile Include="Plantillas\Generales\Cotas\DimensionStyles\Lineal y Alineada\DimensionStyleService.cs" />
+    <Compile Include="Plantillas\Generales\Cotas\DimensionStyles\Depurar\DimStyleCleanup.cs" />
+    <Compile Include="Plantillas\Generales\Cotas\DimensionStyles\Lineal y Alineada\DimStyleOptions.cs" />
     <Compile Include="Plantillas\Generales\Lineas\EliminarAnteriores\LinePatternsCleanup.cs" />
     <Compile Include="Plantillas\Generales\Lineas\LinePatterns\LinePatternsService.cs" />
     <Compile Include="Plantillas\Generales\Lineas\LineStyles\LineStyleService.cs" />
     <Compile Include="Plantillas\Generales\Lineas\ObjectStyles\ObjectStyleServices.cs" />
+    <Compile Include="Plantillas\Generales\Textos\TextStyles\TextStyleCleanUp.cs" />
     <Compile Include="Plantillas\Generales\Textos\TextStyles\TextStyleService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">

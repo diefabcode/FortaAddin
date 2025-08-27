@@ -153,25 +153,12 @@ namespace Forta.Core.Plantillas.Generales.Cotas.DimensionStyles
                     })
                     .ToList();
 
-
                 var tiposNoFI = allTypesUpdated
                     .Where(dt => !EsFI(dt.Name))
                     .Select(dt => new { Id = dt.Id, Name = dt.Name })
                     .ToList();
 
                 Debug.WriteLine($"Tipos NO-FI a evaluar para eliminación: {tiposNoFI.Count}");
-                
-                // Mostrar cuáles tipos se van a eliminar si hay alguno
-                if (tiposNoFI.Count > 0)
-                {
-                    TaskDialog.Show("FORTA - Depuración de Cotas", 
-                        $"Se van a eliminar los siguientes tipos que no pertenecen a la plantilla de FORTA:\n\n" + 
-                        string.Join("\n", tiposNoFI.Select(t => $"• {t.Name}")) +
-                        $"\n\n¿Desea continuar?",
-                        TaskDialogCommonButtons.Yes | TaskDialogCommonButtons.No);
-                        
-                    // Por ahora continuamos siempre, pero se puede agregar lógica de confirmación
-                }
 
                 if (tiposNoFI.Count > 0)
                 {

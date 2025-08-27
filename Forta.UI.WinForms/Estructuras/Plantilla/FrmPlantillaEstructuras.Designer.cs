@@ -32,6 +32,7 @@
             this.pbx_minimizar = new System.Windows.Forms.PictureBox();
             this.pbx_maximizar = new System.Windows.Forms.PictureBox();
             this.pbx_cerrar = new System.Windows.Forms.PictureBox();
+            this.chbx_depurarCotas = new System.Windows.Forms.CheckBox();
             this.btn_parametros = new System.Windows.Forms.Button();
             this.btn_subproyectos = new System.Windows.Forms.Button();
             this.btn_materiales = new System.Windows.Forms.Button();
@@ -40,7 +41,8 @@
             this.btn_iniciaFamilias = new System.Windows.Forms.Button();
             this.btn_estilosLinea = new System.Windows.Forms.Button();
             this.btn_adquirirPropiedades = new System.Windows.Forms.Button();
-            this.chbx_depurarCotas = new System.Windows.Forms.CheckBox();
+            this.chbx_depurarTextos = new System.Windows.Forms.CheckBox();
+            this.chbx_depurarLineas = new System.Windows.Forms.CheckBox();
             this.pnl_PlantillaEstructura.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbx_minimizar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbx_maximizar)).BeginInit();
@@ -97,6 +99,19 @@
             this.pbx_cerrar.TabIndex = 1;
             this.pbx_cerrar.TabStop = false;
             this.pbx_cerrar.Click += new System.EventHandler(this.pbx_cerrar_Click);
+            // 
+            // chbx_depurarCotas
+            // 
+            this.chbx_depurarCotas.Appearance = System.Windows.Forms.Appearance.Button;
+            this.chbx_depurarCotas.AutoSize = true;
+            this.chbx_depurarCotas.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.chbx_depurarCotas.Image = global::Forta.UI.WinForms.Properties.Resources.Depurar85x26;
+            this.chbx_depurarCotas.Location = new System.Drawing.Point(667, 184);
+            this.chbx_depurarCotas.Name = "chbx_depurarCotas";
+            this.chbx_depurarCotas.Size = new System.Drawing.Size(91, 32);
+            this.chbx_depurarCotas.TabIndex = 15;
+            this.chbx_depurarCotas.UseVisualStyleBackColor = false;
+            this.chbx_depurarCotas.CheckedChanged += new System.EventHandler(this.chbx_depurarCotas_CheckedChanged);
             // 
             // btn_parametros
             // 
@@ -187,23 +202,35 @@
             this.btn_adquirirPropiedades.BackColor = System.Drawing.SystemColors.InactiveBorder;
             this.btn_adquirirPropiedades.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btn_adquirirPropiedades.Image = global::Forta.UI.WinForms.Properties.Resources.AdquirirPropiedades185x85;
-            this.btn_adquirirPropiedades.Location = new System.Drawing.Point(305, 93);
+            this.btn_adquirirPropiedades.Location = new System.Drawing.Point(305, 86);
             this.btn_adquirirPropiedades.Name = "btn_adquirirPropiedades";
             this.btn_adquirirPropiedades.Size = new System.Drawing.Size(185, 85);
             this.btn_adquirirPropiedades.TabIndex = 6;
             this.btn_adquirirPropiedades.UseVisualStyleBackColor = false;
             // 
-            // chbx_depurarCotas
+            // chbx_depurarTextos
             // 
-            this.chbx_depurarCotas.Appearance = System.Windows.Forms.Appearance.Button;
-            this.chbx_depurarCotas.AutoSize = true;
-            this.chbx_depurarCotas.Location = new System.Drawing.Point(675, 185);
-            this.chbx_depurarCotas.Name = "chbx_depurarCotas";
-            this.chbx_depurarCotas.Size = new System.Drawing.Size(83, 26);
-            this.chbx_depurarCotas.TabIndex = 15;
-            this.chbx_depurarCotas.Text = "checkBox1";
-            this.chbx_depurarCotas.UseVisualStyleBackColor = true;
-            this.chbx_depurarCotas.CheckedChanged += new System.EventHandler(this.chbx_depurarCotas_CheckedChanged);
+            this.chbx_depurarTextos.Appearance = System.Windows.Forms.Appearance.Button;
+            this.chbx_depurarTextos.AutoSize = true;
+            this.chbx_depurarTextos.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.chbx_depurarTextos.Image = global::Forta.UI.WinForms.Properties.Resources.Depurar85x26;
+            this.chbx_depurarTextos.Location = new System.Drawing.Point(399, 184);
+            this.chbx_depurarTextos.Name = "chbx_depurarTextos";
+            this.chbx_depurarTextos.Size = new System.Drawing.Size(91, 32);
+            this.chbx_depurarTextos.TabIndex = 16;
+            this.chbx_depurarTextos.UseVisualStyleBackColor = false;
+            this.chbx_depurarTextos.CheckedChanged += new System.EventHandler(this.chbx_depurarTextos_CheckedChanged);
+            // 
+            // chbx_depurarLineas
+            // 
+            this.chbx_depurarLineas.Appearance = System.Windows.Forms.Appearance.Button;
+            this.chbx_depurarLineas.AutoSize = true;
+            this.chbx_depurarLineas.Image = global::Forta.UI.WinForms.Properties.Resources.Depurar85x26;
+            this.chbx_depurarLineas.Location = new System.Drawing.Point(137, 184);
+            this.chbx_depurarLineas.Name = "chbx_depurarLineas";
+            this.chbx_depurarLineas.Size = new System.Drawing.Size(91, 32);
+            this.chbx_depurarLineas.TabIndex = 17;
+            this.chbx_depurarLineas.UseVisualStyleBackColor = true;
             // 
             // FrmPlantillaEstructuras
             // 
@@ -211,6 +238,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ButtonFace;
             this.ClientSize = new System.Drawing.Size(822, 577);
+            this.Controls.Add(this.chbx_depurarLineas);
+            this.Controls.Add(this.chbx_depurarTextos);
             this.Controls.Add(this.chbx_depurarCotas);
             this.Controls.Add(this.btn_parametros);
             this.Controls.Add(this.btn_subproyectos);
@@ -248,5 +277,7 @@
         private System.Windows.Forms.Button btn_subproyectos;
         private System.Windows.Forms.Button btn_parametros;
         private System.Windows.Forms.CheckBox chbx_depurarCotas;
+        private System.Windows.Forms.CheckBox chbx_depurarTextos;
+        private System.Windows.Forms.CheckBox chbx_depurarLineas;
     }
 }
