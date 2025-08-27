@@ -10,7 +10,7 @@ namespace Forta.Core.Plantillas.Generales.Lineas.LineStyles
             var linesCat = doc.Settings.Categories.get_Item(BuiltInCategory.OST_Lines);
             var toDelete = new List<ElementId>();
             foreach (Category sc in linesCat.SubCategories)
-                if (!sc.Name.StartsWith("<")) toDelete.Add(sc.Id);
+                if (!sc.Name.StartsWith("<") && !sc.Name.StartsWith("#")) toDelete.Add(sc.Id);
             if (toDelete.Count > 0) doc.Delete(toDelete);
         }
 

@@ -225,12 +225,14 @@
             // 
             this.chbx_depurarLineas.Appearance = System.Windows.Forms.Appearance.Button;
             this.chbx_depurarLineas.AutoSize = true;
+            this.chbx_depurarLineas.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.chbx_depurarLineas.Image = global::Forta.UI.WinForms.Properties.Resources.Depurar85x26;
             this.chbx_depurarLineas.Location = new System.Drawing.Point(137, 184);
             this.chbx_depurarLineas.Name = "chbx_depurarLineas";
             this.chbx_depurarLineas.Size = new System.Drawing.Size(91, 32);
             this.chbx_depurarLineas.TabIndex = 17;
             this.chbx_depurarLineas.UseVisualStyleBackColor = true;
+            this.chbx_depurarLineas.CheckedChanged += new System.EventHandler(this.chbx_depurarLineas_CheckedChanged);
             // 
             // FrmPlantillaEstructuras
             // 

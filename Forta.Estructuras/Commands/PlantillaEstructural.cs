@@ -42,7 +42,7 @@ namespace Forta.Estructuras.Commands
 
                     if (accion == "EstilosLinea")
                     {
-                        AplicarEstilosLinea(commandData.Application.ActiveUIDocument.Document);
+                        AplicarEstilosLinea(commandData.Application.ActiveUIDocument.Document, form.DepurarLineas);
                         TaskDialog.Show("Éxito", "Estilos de línea aplicados correctamente.");
                     }
                     else if (accion == "EstilosTexto")
@@ -69,15 +69,18 @@ namespace Forta.Estructuras.Commands
 
 
         #region ESTILOS DE LINEA
-        private void AplicarEstilosLinea(Document doc)
+        private void AplicarEstilosLinea(Document doc, bool depurarLineas)
         {
             using (Transaction trans = new Transaction(doc, "Aplicar Estilos de Línea"))
             {
                 trans.Start();
                 try
                 {
-                    // 1) Patrones: limpiar y crear según perfiles de Estructuras
-                    LinePatternsCleanup.DeleteCustom(doc);
+                    // 1) Patrones: limpiar solo si depuración está habilitada
+                    if (depurarLineas)
+                    {
+                        LinePatternsCleanup.DeleteCustom(doc);
+                    }
                     foreach (var (name, segs) in EstructurasLinePatternProfiles.All())
                         LinePatternsService.CreateOrUpdate(doc, name, segs);
 
@@ -96,8 +99,11 @@ namespace Forta.Estructuras.Commands
                 { "Section Line", "Linea de Corte" },       { "Línea de sección", "Linea de Corte" }
             });
 
-                    // 4) Line Styles: borrar existentes, crear y configurar los tuyos
-                    LineStylesService.RemoveCustom(doc);
+                    // 4) Line Styles: borrar existentes solo si depuración está habilitada
+                    if (depurarLineas)
+                    {
+                        LineStylesService.RemoveCustom(doc);
+                    }
                     LineStylesService.Ensure(doc, new[]
                     {
                 "#1 Discontinua", "#1 Solida", "#1 Solida Roja",

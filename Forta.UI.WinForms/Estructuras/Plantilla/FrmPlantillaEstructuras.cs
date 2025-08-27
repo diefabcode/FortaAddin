@@ -18,6 +18,7 @@ namespace Forta.UI.WinForms
 
         public bool DepurarCotas => chbx_depurarCotas.Checked;
         public bool DepurarTextos => chbx_depurarTextos.Checked;
+        public bool DepurarLineas => chbx_depurarLineas.Checked;
         private bool dragging = false;
         private Point dragCursorPoint;
         private Point dragFormPoint;
@@ -161,6 +162,14 @@ namespace Forta.UI.WinForms
         {
             // Cambiar color de fondo cuando está seleccionado
             chbx_depurarTextos.BackColor = chbx_depurarTextos.Checked
+                ? Color.LightBlue
+                : SystemColors.Control;
+        }
+
+        private void chbx_depurarLineas_CheckedChanged(object sender, EventArgs e)
+        {
+            // Cambiar color de fondo cuando está seleccionado
+            chbx_depurarLineas.BackColor = chbx_depurarLineas.Checked
                 ? Color.LightBlue
                 : SystemColors.Control;
         }
