@@ -84,42 +84,32 @@ namespace Forta.Estructuras.Commands
                     foreach (var (name, segs) in EstructurasLinePatternProfiles.All())
                         LinePatternsService.CreateOrUpdate(doc, name, segs);
 
-                    // 2) Object Styles (pesos por categoría)
-                    ObjectStylesService.SetModelWeights(doc, proj: 1, cut: 2);
-                    ObjectStylesService.SetAnnotationWeights(doc, proj: 1);
+                    // 2) Object Styles según perfiles de Estructuras
+                    var modelWeights = EstructurasObjectStyleProfiles.ModelWeights;
+                    ObjectStylesService.SetModelWeights(doc, proj: modelWeights.ProjectionWeight, cut: modelWeights.CutWeight);
+                    
+                    var annotationWeights = EstructurasObjectStyleProfiles.AnnotationWeights;
+                    ObjectStylesService.SetAnnotationWeights(doc, proj: annotationWeights.ProjectionWeight);
 
                     // 3) Object Styles (patrón por categoría de anotación)
-                    ObjectStylesService.SetAnnotationPatterns(doc, new Dictionary<string, string>
-            {
-                { "Callout Boundary", "Linea de Llamada" }, { "Contorno de llamada", "Linea de Llamada" },
-                { "Displacement Path", "Linea Punto" },     { "Camino de desplazamiento", "Linea Punto" },
-                { "Plan Region", "Solid" },                 { "Región de plano", "Solid" },
-                { "Reference Planes", "Linea de Planos de Referencia" }, { "Planos de referencia", "Linea de Planos de Referencia" },
-                { "Scope Boxes", "Linea de Cajas de Referencia" },       { "Cajas de referencia", "Linea de Cajas de Referencia" },
-                { "Section Line", "Linea de Corte" },       { "Línea de sección", "Linea de Corte" }
-            });
+                    ObjectStylesService.SetAnnotationPatterns(doc, EstructurasObjectStyleProfiles.AnnotationPatterns);
 
                     // 4) Line Styles: borrar existentes solo si depuración está habilitada
                     if (depurarLineas)
                     {
                         LineStylesService.RemoveCustom(doc);
                     }
-                    LineStylesService.Ensure(doc, new[]
+                    
+                    // 5) Crear y configurar Line Styles según perfiles de Estructuras
+                    var lineStyles = EstructurasLineStyleProfiles.All();
+                    var styleNames = lineStyles.Select(ls => ls.Name).ToArray();
+                    
+                    LineStylesService.Ensure(doc, styleNames);
+                    
+                    foreach (var style in lineStyles)
                     {
-                "#1 Discontinua", "#1 Solida", "#1 Solida Roja",
-                "#2 Discontinua", "#2 Solida", "#2 Solida Roja",
-                "#3 Discontinua", "#3 Solida", "#3 Solida Roja"
-            });
-
-                    LineStylesService.SetProps(doc, "#1 Discontinua", 1, new Color(0, 0, 0), "Linea Discontinua");
-                    LineStylesService.SetProps(doc, "#1 Solida", 1, new Color(0, 0, 0), "Solid");
-                    LineStylesService.SetProps(doc, "#1 Solida Roja", 1, new Color(255, 0, 0), "Solid");
-                    LineStylesService.SetProps(doc, "#2 Discontinua", 2, new Color(0, 0, 0), "Linea Discontinua");
-                    LineStylesService.SetProps(doc, "#2 Solida", 2, new Color(0, 0, 0), "Solid");
-                    LineStylesService.SetProps(doc, "#2 Solida Roja", 2, new Color(255, 0, 0), "Solid");
-                    LineStylesService.SetProps(doc, "#3 Discontinua", 3, new Color(0, 0, 0), "Linea Discontinua");
-                    LineStylesService.SetProps(doc, "#3 Solida", 3, new Color(0, 0, 0), "Solid");
-                    LineStylesService.SetProps(doc, "#3 Solida Roja", 3, new Color(255, 0, 0), "Solid");
+                        LineStylesService.SetProps(doc, style.Name, style.Weight, style.Color, style.PatternName);
+                    }
 
                     trans.Commit();
                 }
